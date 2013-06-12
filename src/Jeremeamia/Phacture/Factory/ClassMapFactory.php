@@ -63,7 +63,7 @@ class ClassMapFactory extends AbstractClassFactory implements \IteratorAggregate
     /**
      * {@inheritdoc}
      */
-    public function getFullyQualifiedClassName($name)
+    public function getFullyQualifiedClassName($name, array $options = array())
     {
         if (isset($this->classMap[$name]) && class_exists($this->classMap[$name])) {
             return $this->classMap[$name];

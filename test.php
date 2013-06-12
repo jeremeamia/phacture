@@ -64,7 +64,7 @@ namespace
     assert('$objFoo instanceof \Foo\Bar\Objects\Foo');
     $objBar = $compositeFactory->create('bar');
     assert('$objBar instanceof \Foo\Bar\Objects\Bar');
-    $objBaz = $compositeFactory->create('baz');
+    $objBaz = $compositeFactory('baz');
     assert('$objBaz instanceof \Foo\Bar\MoarObjects\Baz');
     $objFooBar = $compositeFactory->create('fooBarObj');
     assert('$objFooBar->foo === "bar"');

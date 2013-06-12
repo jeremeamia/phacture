@@ -19,12 +19,14 @@ abstract class AbstractFactoryDecorator implements FactoryInterface
         $this->innerFactory = $factory;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function create($name, $options = array())
     {
         return $this->innerFactory->create($name, $options);
+    }
+
+    public function canCreate($name, $options = array())
+    {
+        return $this->innerFactory->canCreate($name, $options);
     }
 
     /**
@@ -36,11 +38,8 @@ abstract class AbstractFactoryDecorator implements FactoryInterface
     }
 
     /**
-     * @param string $method
-     * @param array  $args
-     *
-     * @return mixed
-     * @throws \BadMethodCallException If the method does not exist on the object or decorated objects
+     * {@inheritdoc}
+     * @throws \BadMethodCallException If the method does not exist on the object or decorated object
      */
     public function __call($method, $args)
     {
@@ -51,5 +50,10 @@ abstract class AbstractFactoryDecorator implements FactoryInterface
             throw new \BadMethodCallException("The \"{$method}\" method does not exist on this object or any of the "
                 . "inner (decorated) objects.");
         }
+    }
+
+    public function __invoke($name, $options = array())
+    {
+        return $this->innerFactory->create($name, $options);
     }
 }

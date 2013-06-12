@@ -13,14 +13,14 @@ abstract class OptionsHelper
      */
     public static function arrayify($options)
     {
-        if ($options instanceof \Traversable) {
-            $options = iterator_to_array($options, true);
+        if (is_array($options)) {
+            return $options;
+        } elseif ($options instanceof \Traversable) {
+            return iterator_to_array($options, true);
         } elseif (is_object($options)) {
-            $options = get_object_vars($options);
+            return get_object_vars($options);
         } else {
-            $options = (array) $options;
+            return (array) $options;
         }
-
-        return $options;
     }
 }

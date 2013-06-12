@@ -61,11 +61,6 @@ class CallbackFactory implements FactoryInterface, \IteratorAggregate
         return $this;
     }
 
-    public function getIterator()
-    {
-        return new \ArrayIterator($this->callbackMap);
-    }
-
     public function create($name, $options = array())
     {
         $options = OptionsHelper::arrayify($options);
@@ -75,6 +70,21 @@ class CallbackFactory implements FactoryInterface, \IteratorAggregate
         } else {
             throw new FactoryException("There is no callback to call associated with \"{$name}\".");
         }
+    }
+
+    public function canCreate($name, $options = array())
+    {
+        return isset($this->callbackMap[$name]);
+    }
+
+    public function __invoke($name, $options = array())
+    {
+        return $this->create($name, $options);
+    }
+
+    public function getIterator()
+    {
+        return new \ArrayIterator($this->callbackMap);
     }
 }
 

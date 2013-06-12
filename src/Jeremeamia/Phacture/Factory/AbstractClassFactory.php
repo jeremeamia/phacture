@@ -19,12 +19,24 @@ abstract class AbstractClassFactory implements FactoryInterface
         }
     }
 
+    public function canCreate($name, $options = array())
+    {
+        $options = OptionsHelper::arrayify($options);
+        return (bool) $this->getFullyQualifiedClassName($name, $options);
+    }
+
+    public function __invoke($name, $options = array())
+    {
+        return $this->create($name, $options);
+    }
+
     /**
      * Determines the fully qualified class name (FQCN) of a class based on a provided name
      *
-     * @param string $name Name of the object to create
+     * @param string $name    Name of the object to create
+     * @param array  $options Options for the object creation
      *
      * @return null|string
      */
-    abstract public function getFullyQualifiedClassName($name);
+    abstract protected function getFullyQualifiedClassName($name, array $options);
 }

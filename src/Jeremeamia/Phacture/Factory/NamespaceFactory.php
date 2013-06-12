@@ -79,7 +79,7 @@ class NamespaceFactory extends AbstractClassFactory implements \IteratorAggregat
          return $this->iterator;
     }
 
-    public function getFullyQualifiedClassName($name, array $options = array())
+    public function getFullyQualifiedClassName($name, array $options)
     {
         foreach ($this->getIterator() as $namespace) {
             $fqcn = $namespace . '\\' . $name;

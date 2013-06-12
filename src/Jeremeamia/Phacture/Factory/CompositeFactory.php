@@ -57,10 +57,6 @@ class CompositeFactory implements FactoryInterface, \IteratorAggregate
         return $this->iterator;
     }
 
-    /**
-     * {@inheritdoc}
-     * @throws FactoryException If no factory could instantiate the object
-     */
     public function create($name, $options = array())
     {
         /** @var $factory FactoryInterface */
@@ -73,5 +69,22 @@ class CompositeFactory implements FactoryInterface, \IteratorAggregate
         }
 
         throw new FactoryException("There was no factory that could instantiate the object identified by \"{$name}\".");
+    }
+
+    public function canCreate($name, $options = array())
+    {
+        /** @var $factory FactoryInterface */
+        foreach ($this->getIterator() as $factory) {
+            if ($factory->canCreate($name)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function __invoke($name, $options = array())
+    {
+        return $this->create($name, $options);
     }
 }
