@@ -2,6 +2,9 @@
 
 namespace Jeremeamia\Phacture;
 
+/**
+ * A specialized version of SPL's RecursiveArrayIterator that is sorted and only recurses into array children
+ */
 class PrioritizedRecursiveArrayIterator extends \RecursiveArrayIterator
 {
     /**

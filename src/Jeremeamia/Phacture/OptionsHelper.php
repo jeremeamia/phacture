@@ -2,6 +2,9 @@
 
 namespace Jeremeamia\Phacture;
 
+/**
+ * Helper class for converting array-like input into an actual array
+ */
 abstract class OptionsHelper
 {
     /**

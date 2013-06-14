@@ -11,7 +11,7 @@ abstract class AbstractNewInstance
     {
         $class = get_called_class();
         $args = func_get_args();
-        $numArgs = func_num_args();
+        $numArgs = count($args);
 
         if ($numArgs === 0) {
             return new $class;

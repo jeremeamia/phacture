@@ -77,11 +77,6 @@ class CallbackFactory implements FactoryInterface, \IteratorAggregate
         return isset($this->callbackMap[$name]);
     }
 
-    public function __invoke($name, $options = array())
-    {
-        return $this->create($name, $options);
-    }
-
     public function getIterator()
     {
         return new \ArrayIterator($this->callbackMap);

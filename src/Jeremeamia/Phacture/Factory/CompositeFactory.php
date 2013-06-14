@@ -45,18 +45,6 @@ class CompositeFactory implements FactoryInterface, \IteratorAggregate
         return $this;
     }
 
-    /**
-     * @return \RecursiveIteratorIterator
-     */
-    public function getIterator()
-    {
-        if (!$this->iterator) {
-            $this->iterator = new \RecursiveIteratorIterator(new PrioritizedRecursiveArrayIterator($this->factories));
-        }
-
-        return $this->iterator;
-    }
-
     public function create($name, $options = array())
     {
         /** @var $factory FactoryInterface */
@@ -83,8 +71,12 @@ class CompositeFactory implements FactoryInterface, \IteratorAggregate
         return false;
     }
 
-    public function __invoke($name, $options = array())
+    public function getIterator()
     {
-        return $this->create($name, $options);
+        if (!$this->iterator) {
+            $this->iterator = new \RecursiveIteratorIterator(new PrioritizedRecursiveArrayIterator($this->factories));
+        }
+
+        return $this->iterator;
     }
 }

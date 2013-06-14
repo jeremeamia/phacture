@@ -22,9 +22,6 @@ class OptionsResolvingFactoryDecorator extends AbstractFactoryDecorator
         $this->optionsResolver = $optionsResolver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function create($name, $options = array())
     {
         return $this->innerFactory->create($name, $this->optionsResolver->resolveOptions($options));

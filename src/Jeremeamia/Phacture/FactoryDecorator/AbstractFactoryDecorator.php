@@ -51,9 +51,4 @@ abstract class AbstractFactoryDecorator implements FactoryInterface
                 . "inner (decorated) objects.");
         }
     }
-
-    public function __invoke($name, $options = array())
-    {
-        return $this->innerFactory->create($name, $options);
-    }
 }

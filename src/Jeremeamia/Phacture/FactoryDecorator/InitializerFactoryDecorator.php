@@ -23,9 +23,6 @@ class InitializerFactoryDecorator extends AbstractFactoryDecorator
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function create($name, $options = array())
     {
         $options = OptionsHelper::arrayify($options);

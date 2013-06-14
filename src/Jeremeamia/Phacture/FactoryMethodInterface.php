@@ -2,6 +2,9 @@
 
 namespace Jeremeamia\Phacture;
 
+/**
+ * Interface for classes that have a factory method
+ */
 interface FactoryMethodInterface
 {
     /**

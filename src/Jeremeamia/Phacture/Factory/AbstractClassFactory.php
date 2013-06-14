@@ -13,7 +13,7 @@ abstract class AbstractClassFactory implements FactoryInterface
     {
         $options = OptionsHelper::arrayify($options);
         if ($fqcn = $this->getFullyQualifiedClassName($name, $options)) {
-            return new $fqcn;
+            return $this->instantiateClass($fqcn, $options);
         } else {
             throw new FactoryException("Could not instantiate the class by the name \"{$name}\".");
         }
@@ -25,9 +25,17 @@ abstract class AbstractClassFactory implements FactoryInterface
         return (bool) $this->getFullyQualifiedClassName($name, $options);
     }
 
-    public function __invoke($name, $options = array())
+    /**
+     * Performs the actual object creation work. This method is meant to be overwritten to perform more specific logic
+     *
+     * @param string $fqcn    Fully qualified class name (FQCN) of the class to instantiate
+     * @param array  $options Options for the object creation
+     *
+     * @return mixed
+     */
+    protected function instantiateClass($fqcn, array $options)
     {
-        return $this->create($name, $options);
+        return new $fqcn;
     }
 
     /**

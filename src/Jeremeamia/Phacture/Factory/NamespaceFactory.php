@@ -67,18 +67,6 @@ class NamespaceFactory extends AbstractClassFactory implements \IteratorAggregat
         return $this;
     }
 
-    /**
-     * @return \Iterator
-     */
-    public function getIterator()
-    {
-         if (!$this->iterator) {
-             $this->iterator = new \RecursiveIteratorIterator(new PrioritizedRecursiveArrayIterator($this->namespaces));
-         }
-
-         return $this->iterator;
-    }
-
     public function getFullyQualifiedClassName($name, array $options)
     {
         foreach ($this->getIterator() as $namespace) {
@@ -89,5 +77,14 @@ class NamespaceFactory extends AbstractClassFactory implements \IteratorAggregat
         }
 
         return null;
+    }
+
+    public function getIterator()
+    {
+         if (!$this->iterator) {
+             $this->iterator = new \RecursiveIteratorIterator(new PrioritizedRecursiveArrayIterator($this->namespaces));
+         }
+
+         return $this->iterator;
     }
 }

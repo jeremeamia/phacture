@@ -52,17 +52,6 @@ class ClassMapFactory extends AbstractClassFactory implements \IteratorAggregate
         return $this->classMap;
     }
 
-    /**
-     * @return array
-     */
-    public function getIterator()
-    {
-        return new \ArrayIterator($this->classMap);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getFullyQualifiedClassName($name, array $options = array())
     {
         if (isset($this->classMap[$name]) && class_exists($this->classMap[$name])) {
@@ -70,6 +59,11 @@ class ClassMapFactory extends AbstractClassFactory implements \IteratorAggregate
         }
 
         return null;
+    }
+
+    public function getIterator()
+    {
+        return new \ArrayIterator($this->classMap);
     }
 }
 
