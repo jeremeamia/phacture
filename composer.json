@@ -1,4 +1,6 @@
 {
+    "name": "jeremeamia/phacture",
+    "type": "library",
     "autoload": {
         "psr-0": {
             "Jeremeamia\\Phacture": "src/"
