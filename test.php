@@ -21,11 +21,16 @@ namespace Foo\Bar\MoarObjects
 
 namespace
 {
-    use Jeremeamia\Phacture\Factory\CallbackFactory;
-    use Jeremeamia\Phacture\Factory\ClassMapFactory;
-    use Jeremeamia\Phacture\Factory\CompositeFactory;
+    use Jeremeamia\Phacture\Factory\FactoryInterface;
     use Jeremeamia\Phacture\FactoryDecorator\FlyweightFactoryDecorator;
-    use Jeremeamia\Phacture\Factory\NamespaceFactory;
+    use Jeremeamia\Phacture\Factory\CallbackFactoryTrait;
+    class CallbackFactory implements FactoryInterface {use CallbackFactoryTrait;}
+    use Jeremeamia\Phacture\Factory\ClassMapFactoryTrait;
+    class ClassMapFactory implements FactoryInterface {use ClassMapFactoryTrait;}
+    use Jeremeamia\Phacture\Factory\CompositeFactoryTrait;
+    class CompositeFactory implements FactoryInterface {use CompositeFactoryTrait;}
+    use Jeremeamia\Phacture\Factory\NamespaceFactoryTrait;
+    class NamespaceFactory implements FactoryInterface {use NamespaceFactoryTrait;}
 
     $namespaceFactory = new NamespaceFactory();
     $namespaceFactory->addNamespace('Foo\\Bar\\Objects');

@@ -2,33 +2,31 @@
 
 namespace Jeremeamia\Phacture\FactoryDecorator;
 
-use Jeremeamia\Phacture\OptionsHelper;
-
 class InitializerFactoryDecorator extends AbstractFactoryDecorator
 {
     /**
      * @var array
      */
-    protected $initializers = array();
+    protected $initializers = [];
 
     /**
      * @param callable $initializer
      *
      * @return $this
      */
-    public function addInitializer(\Closure $initializer)
+    public function addInitializer(callable $initializer)
     {
         $this->initializers[] = $initializer;
 
         return $this;
     }
 
-    public function create($name, $options = array())
+    public function create($name, $options = [])
     {
-        $options = OptionsHelper::arrayify($options);
-        $instance = parent::create($name, $options);
+        $options = $this->convertOptionsToArray($options);
+        $instance = $this->innerFactory->create($name, $options);
 
-        /** @var $initializer \Closure */
+        /** @var callable $initializer */
         foreach ($this->initializers as $initializer) {
             $initializer($instance, $options);
         }

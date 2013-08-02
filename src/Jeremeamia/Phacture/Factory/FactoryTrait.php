@@ -2,18 +2,20 @@
 
 namespace Jeremeamia\Phacture\Factory;
 
-use Jeremeamia\Phacture\OptionsHelper;
+use Jeremeamia\Phacture\HandlesOptionsTrait;
 
 /**
  * Base factory trait for factory classes
  */
 trait FactoryTrait
 {
+    use HandlesOptionsTrait;
+
     /**
      * Allows invocation of the factory to trigger object creation
      *
-     * @param string             $name    Name of the object to create
-     * @param array|\Traversable $options Options for the object creation
+     * @param string $name    Name of the object to create
+     * @param mixed  $options Options for the object creation
      *
      * @return mixed The object that was instantiated
      */
@@ -23,35 +25,16 @@ trait FactoryTrait
     }
 
     /**
-     * Create and return an object specified by a name.
+     * Implements the FactoryInterface::create method
      *
-     * @param string             $name    Name of the object to create
-     * @param array|\Traversable $options Options for the object creation
-     *
-     * @return mixed The object that was instantiated
-     * @throws FactoryException Throws FactoryException if the object referenced by the provided name cannot be created
+     * @see \Jeremeamia\Phacture\Factory\FactoryInterface::create
      */
     abstract public function create($name, $options = array());
 
     /**
-     * Checks if the object specified can be created by the factory
+     * Implements the FactoryInterface::canCreate method
      *
-     * @param string             $name    Name of the object to be create created
-     * @param array|\Traversable $options Options for the object creation
-     *
-     * @return bool Whether or not the object can be created
+     * @see \Jeremeamia\Phacture\Factory\FactoryInterface::canCreate
      */
     abstract public function canCreate($name, $options = array());
-
-    /**
-     * Coerces the provided argument into an array
-     *
-     * @param mixed $options
-     *
-     * @return array
-     */
-    protected static function arrayifyOptions($options)
-    {
-        return OptionsHelper::arrayify($options);
-    }
 }

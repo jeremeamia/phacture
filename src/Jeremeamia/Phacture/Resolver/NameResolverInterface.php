@@ -5,7 +5,7 @@ namespace Jeremeamia\Phacture\Resolver;
 interface NameResolverInterface
 {
     /**
-     * @param array|\Traversable $options
+     * @param mixed $options
      *
      * @return string
      */

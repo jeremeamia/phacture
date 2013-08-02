@@ -2,28 +2,30 @@
 
 namespace Jeremeamia\Phacture\Resolver;
 
-use Jeremeamia\Phacture\OptionsHelper;
+use Jeremeamia\Phacture\HandlesOptionsTrait;
 
 class RequiredOptionsResolver implements OptionsResolverInterface
 {
-    /**
-     * @var array
-     */
-    protected $defaultOptions = array();
+    use HandlesOptionsTrait;
 
     /**
      * @var array
      */
-    protected $requiredOptions = array();
+    protected $defaultOptions = [];
 
     /**
-     * @param array|\Traversable $options
+     * @var array
+     */
+    protected $requiredOptions = [];
+
+    /**
+     * @param mixed $options
      *
      * @return self
      */
     public function setDefaultOptions($options)
     {
-        $this->defaultOptions = OptionsHelper::arrayify($options);
+        $this->defaultOptions = $this->convertOptionsToArray($options);
 
         return $this;
     }
@@ -35,20 +37,20 @@ class RequiredOptionsResolver implements OptionsResolverInterface
      */
     public function setRequiredOptions($options)
     {
-        $this->requiredOptions = OptionsHelper::arrayify($options);
+        $this->requiredOptions = $this->convertOptionsToArray($options);
 
         return $this;
     }
 
     /**
-     * @param array|\Traversable $options
+     * @param mixed $options
      *
      * @return array
      * @throws \InvalidArgumentException
      */
     public function resolveOptions($options)
     {
-        $options = array_replace($this->defaultOptions, OptionsHelper::arrayify($options));
+        $options = array_replace($this->defaultOptions, $this->convertOptionsToArray($options));
 
         if (array_diff($this->requiredOptions, array_keys($options))) {
             $keys = implode(', ', $this->requiredOptions);

@@ -2,26 +2,28 @@
 
 namespace Jeremeamia\Phacture\Factory;
 
-use Jeremeamia\Phacture\OptionsHelper;
-
 /**
- * Base factory class for factories that must determine the FQCN from the provided name
+ * Trait for factories that must determine the FQCN from the provided name
  */
-abstract class AbstractClassFactory implements FactoryInterface
+trait ClassFactoryTrait
 {
-    public function create($name, $options = array())
+    use FactoryTrait;
+
+    public function create($name, $options = [])
     {
-        $options = OptionsHelper::arrayify($options);
+        $options = $this->convertOptionsToArray($options);
+
         if ($fqcn = $this->getFullyQualifiedClassName($name, $options)) {
             return $this->instantiateClass($fqcn, $options);
         } else {
-            throw new FactoryException("Could not instantiate the class by the name \"{$name}\".");
+            throw (new FactoryException)->setName($name)->setOptions($options);
         }
     }
 
-    public function canCreate($name, $options = array())
+    public function canCreate($name, $options = [])
     {
-        $options = OptionsHelper::arrayify($options);
+        $options = $this->convertOptionsToArray($options);
+
         return (bool) $this->getFullyQualifiedClassName($name, $options);
     }
 
@@ -41,7 +43,7 @@ abstract class AbstractClassFactory implements FactoryInterface
     /**
      * Determines the fully qualified class name (FQCN) of a class based on a provided name
      *
-     * @param string $name    Name of the object to create
+     * @param string $name    Name representing the object to create
      * @param array  $options Options for the object creation
      *
      * @return null|string

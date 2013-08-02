@@ -2,12 +2,14 @@
 
 namespace Jeremeamia\Phacture\Factory;
 
-class ClassMapFactory extends AbstractClassFactory implements \IteratorAggregate
+trait ClassMapFactoryTrait
 {
+    use ClassFactoryTrait;
+
     /**
      * @var array
      */
-    protected $classMap = array();
+    protected $classMap = [];
 
     /**
      * @param array $classMap

@@ -4,12 +4,14 @@ namespace Jeremeamia\Phacture\Factory;
 
 use Jeremeamia\Phacture\PrioritizedRecursiveArrayIterator;
 
-class NamespaceFactory extends AbstractClassFactory implements \IteratorAggregate
+trait NamespaceFactoryTrait
 {
+    use ClassFactoryTrait;
+
     /**
      * @var array
      */
-    protected $namespaces = array();
+    protected $namespaces = [];
 
     /**
      * @var \RecursiveIteratorIterator
@@ -19,7 +21,7 @@ class NamespaceFactory extends AbstractClassFactory implements \IteratorAggregat
     /**
      * @param array $namespaces
      */
-    public function __construct(array $namespaces = array())
+    public function __construct(array $namespaces = [])
     {
         foreach ($namespaces as $key => $value) {
             if (is_string($key) && is_int($value)) {
@@ -39,7 +41,7 @@ class NamespaceFactory extends AbstractClassFactory implements \IteratorAggregat
     public function addNamespace($namespace, $priority = 0)
     {
         if (!isset($this->namespaces[$priority])) {
-            $this->namespaces[$priority] = array();
+            $this->namespaces[$priority] = [];
         }
 
         $this->namespaces[$priority][] = trim($namespace, '\\');
@@ -82,7 +84,9 @@ class NamespaceFactory extends AbstractClassFactory implements \IteratorAggregat
     public function getIterator()
     {
          if (!$this->iterator) {
-             $this->iterator = new \RecursiveIteratorIterator(new PrioritizedRecursiveArrayIterator($this->namespaces));
+             $this->iterator = new \RecursiveIteratorIterator(
+                 new PrioritizedRecursiveArrayIterator($this->namespaces)
+             );
          }
 
          return $this->iterator;

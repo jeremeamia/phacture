@@ -3,9 +3,12 @@
 namespace Jeremeamia\Phacture\FactoryDecorator;
 
 use Jeremeamia\Phacture\Factory\FactoryInterface;
+use Jeremeamia\Phacture\Factory\FactoryTrait;
 
-abstract class AbstractFactoryDecorator implements FactoryInterface
+abstract class AbstractFactoryDecorator implements FactoryDecoratorInterface
 {
+    use FactoryTrait;
+
     /**
      * @var FactoryInterface
      */
@@ -19,36 +22,23 @@ abstract class AbstractFactoryDecorator implements FactoryInterface
         $this->innerFactory = $factory;
     }
 
-    public function create($name, $options = array())
+    public function create($name, $options = [])
     {
         return $this->innerFactory->create($name, $options);
     }
 
-    public function canCreate($name, $options = array())
+    public function canCreate($name, $options = [])
     {
         return $this->innerFactory->canCreate($name, $options);
     }
 
-    /**
-     * @return FactoryInterface
-     */
     public function getInnerFactory()
     {
         return $this->innerFactory;
     }
 
-    /**
-     * {@inheritdoc}
-     * @throws \BadMethodCallException If the method does not exist on the object or decorated object
-     */
     public function __call($method, $args)
     {
-        $callable = array($this->innerFactory, $method);
-        if (is_callable($callable)) {
-            return call_user_func_array($callable, $args);
-        } else {
-            throw new \BadMethodCallException("The \"{$method}\" method does not exist on this object or any of the "
-                . "inner (decorated) objects.");
-        }
+        return call_user_func_array(array($this->innerFactory, $method), $args);
     }
 }

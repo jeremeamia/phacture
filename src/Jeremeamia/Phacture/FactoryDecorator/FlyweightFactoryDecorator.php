@@ -2,42 +2,47 @@
 
 namespace Jeremeamia\Phacture\FactoryDecorator;
 
+use Jeremeamia\Phacture\HandlesOptionsTrait;
 use Jeremeamia\Phacture\OptionsHelper;
 
 class FlyweightFactoryDecorator extends AbstractFactoryDecorator
 {
+    use HandlesOptionsTrait;
+
+    const OPTION_USE_NEW = 'use_new';
+
     /**
      * @var array
      */
-    protected $objects = array();
+    protected $itemCache = [];
 
     /**
      * {@inheritdoc}
      */
-    public function create($name, $options = array())
+    public function create($name, $options = [])
     {
-        $options = OptionsHelper::arrayify($options);
+        $options = $this->convertOptionsToArray($options);
         $key = $this->calculateKey($name, $options);
 
-        if (isset($options['use_new']) && $options['use_new']) {
-            unset($this->objects[$key], $options['use_new']);
+        if (isset($options[self::OPTION_USE_NEW]) && $options[self::OPTION_USE_NEW]) {
+            unset($this->itemCache[$key], $options[self::OPTION_USE_NEW]);
         }
 
-        if (!isset($this->objects[$key])) {
-            $this->objects[$key] = parent::create($name, $options);
+        if (!isset($this->itemCache[$key])) {
+            $this->itemCache[$key] = $this->innerFactory->create($name, $options);
         }
 
-        return $this->objects[$key];
+        return $this->itemCache[$key];
     }
 
     /**
-     * Clears the cache of objects that the flyweight factory has stored
+     * Clears the cache of items that the flyweight factory has stored
      *
      * @return self
      */
-    public function clear()
+    public function clearCache()
     {
-        $this->objects = array();
+        $this->itemCache = [];
 
         return $this;
     }

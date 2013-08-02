@@ -2,19 +2,19 @@
 
 namespace Jeremeamia\Phacture\Factory;
 
-use Jeremeamia\Phacture\OptionsHelper;
-
-class CallbackFactory implements FactoryInterface, \IteratorAggregate
+trait CallbackFactoryTrait
 {
+    use FactoryTrait;
+
     /**
      * @var array
      */
-    protected $callbackMap = array();
+    protected $callbackMap = [];
 
     /**
      * @param array $callbackMap
      */
-    public function __construct(array $callbackMap = array())
+    public function __construct(array $callbackMap = [])
     {
         foreach ($callbackMap as $name => $callback) {
             $this->addCallback($name, $callback);
@@ -22,18 +22,13 @@ class CallbackFactory implements FactoryInterface, \IteratorAggregate
     }
 
     /**
-     * @param string $name
-     * @param mixed  $callback
+     * @param string   $name
+     * @param callable $callback
      *
      * @return self
-     * @throws \InvalidArgumentException If the callback is not callable
      */
-    public function addCallback($name, $callback)
+    public function addCallback($name, callable $callback)
     {
-        if (!is_callable($callback)) {
-            throw new \InvalidArgumentException('You must provide a valid callback.');
-        }
-
         $this->callbackMap[$name] = $callback;
 
         return $this;
@@ -61,18 +56,18 @@ class CallbackFactory implements FactoryInterface, \IteratorAggregate
         return $this;
     }
 
-    public function create($name, $options = array())
+    public function create($name, $options = [])
     {
-        $options = OptionsHelper::arrayify($options);
+        $options = $this->convertOptionsToArray($options);
+
         if (isset($this->callbackMap[$name])) {
-            $callback = $this->callbackMap[$name];
-            return $options ? call_user_func_array($callback, $options) : call_user_func($callback);
+            return $this->callbackMap[$name]($options);
         } else {
-            throw new FactoryException("There is no callback to call associated with \"{$name}\".");
+            throw (new FactoryException)->setName($name)->setOptions($options);
         }
     }
 
-    public function canCreate($name, $options = array())
+    public function canCreate($name, $options = [])
     {
         return isset($this->callbackMap[$name]);
     }

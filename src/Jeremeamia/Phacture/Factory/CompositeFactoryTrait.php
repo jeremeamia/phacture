@@ -4,12 +4,14 @@ namespace Jeremeamia\Phacture\Factory;
 
 use Jeremeamia\Phacture\PrioritizedRecursiveArrayIterator;
 
-class CompositeFactory implements FactoryInterface, \IteratorAggregate
+trait CompositeFactoryTrait
 {
+    use FactoryTrait;
+
     /**
      * @var array
      */
-    protected $factories = array();
+    protected $factories = [];
 
     /**
      * @var \RecursiveIteratorIterator
@@ -19,7 +21,7 @@ class CompositeFactory implements FactoryInterface, \IteratorAggregate
     /**
      * @param array $factories
      */
-    public function __construct(array $factories = array())
+    public function __construct(array $factories = [])
     {
         // Add factories to the composite factory
         foreach ($factories as $factory) {
@@ -36,7 +38,7 @@ class CompositeFactory implements FactoryInterface, \IteratorAggregate
     public function addFactory(FactoryInterface $factory, $priority = 0)
     {
         if (!isset($this->factories[$priority])) {
-            $this->factories[$priority] = array();
+            $this->factories[$priority] = [];
         }
 
         $this->factories[$priority][] = $factory;
@@ -45,21 +47,19 @@ class CompositeFactory implements FactoryInterface, \IteratorAggregate
         return $this;
     }
 
-    public function create($name, $options = array())
+    public function create($name, $options = [])
     {
         /** @var $factory FactoryInterface */
         foreach ($this->getIterator() as $factory) {
-            try {
+            if ($factory->canCreate($name)) {
                 return $factory->create($name, $options);
-            } catch (FactoryException $e) {
-                continue;
             }
         }
 
-        throw new FactoryException("There was no factory that could instantiate the object identified by \"{$name}\".");
+        throw (new FactoryException)->setName($name)->setOptions($options);
     }
 
-    public function canCreate($name, $options = array())
+    public function canCreate($name, $options = [])
     {
         /** @var $factory FactoryInterface */
         foreach ($this->getIterator() as $factory) {
@@ -74,7 +74,9 @@ class CompositeFactory implements FactoryInterface, \IteratorAggregate
     public function getIterator()
     {
         if (!$this->iterator) {
-            $this->iterator = new \RecursiveIteratorIterator(new PrioritizedRecursiveArrayIterator($this->factories));
+            $this->iterator = new \RecursiveIteratorIterator(
+                new PrioritizedRecursiveArrayIterator($this->factories)
+            );
         }
 
         return $this->iterator;
