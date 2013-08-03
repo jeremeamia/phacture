@@ -19,17 +19,6 @@ trait CompositeFactoryTrait
     protected $iterator;
 
     /**
-     * @param array $factories
-     */
-    public function __construct(array $factories = [])
-    {
-        // Add factories to the composite factory
-        foreach ($factories as $factory) {
-            $this->addFactory($factory);
-        }
-    }
-
-    /**
      * @param FactoryInterface $factory
      * @param int              $priority
      *
@@ -47,7 +36,7 @@ trait CompositeFactoryTrait
         return $this;
     }
 
-    public function create($name, $options = [])
+    public function create($name = null, $options = [])
     {
         /** @var $factory FactoryInterface */
         foreach ($this->getIterator() as $factory) {
@@ -59,7 +48,7 @@ trait CompositeFactoryTrait
         throw (new FactoryException)->setName($name)->setOptions($options);
     }
 
-    public function canCreate($name, $options = [])
+    public function canCreate($name = null, $options = [])
     {
         /** @var $factory FactoryInterface */
         foreach ($this->getIterator() as $factory) {

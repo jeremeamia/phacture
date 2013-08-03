@@ -16,7 +16,19 @@ class RequiredOptionsResolver implements OptionsResolverInterface
     /**
      * @var array
      */
-    protected $requiredOptions = [];
+    protected $requiredKeys = [];
+
+    /**
+     * @param array $keys
+     *
+     * @return self
+     */
+    public function setRequiredKeys(array $keys)
+    {
+        $this->requiredKeys = $keys;
+
+        return $this;
+    }
 
     /**
      * @param mixed $options
@@ -31,18 +43,6 @@ class RequiredOptionsResolver implements OptionsResolverInterface
     }
 
     /**
-     * @param array|\Traversable $options
-     *
-     * @return self
-     */
-    public function setRequiredOptions($options)
-    {
-        $this->requiredOptions = $this->convertOptionsToArray($options);
-
-        return $this;
-    }
-
-    /**
      * @param mixed $options
      *
      * @return array
@@ -52,8 +52,8 @@ class RequiredOptionsResolver implements OptionsResolverInterface
     {
         $options = array_replace($this->defaultOptions, $this->convertOptionsToArray($options));
 
-        if (array_diff($this->requiredOptions, array_keys($options))) {
-            $keys = implode(', ', $this->requiredOptions);
+        if (array_diff($this->requiredKeys, array_keys($options))) {
+            $keys = implode(', ', $this->requiredKeys);
             throw new \InvalidArgumentException("You must provide all of the following keys: {$keys}.");
         }
 

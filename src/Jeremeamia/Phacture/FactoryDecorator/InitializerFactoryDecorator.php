@@ -21,7 +21,7 @@ class InitializerFactoryDecorator extends AbstractFactoryDecorator
         return $this;
     }
 
-    public function create($name, $options = [])
+    public function create($name = null, $options = [])
     {
         $options = $this->convertOptionsToArray($options);
         $instance = $this->innerFactory->create($name, $options);

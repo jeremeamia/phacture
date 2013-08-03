@@ -7,7 +7,14 @@ namespace Jeremeamia\Phacture\Factory;
  */
 class FactoryException extends \RuntimeException
 {
+    /**
+     * @var string
+     */
     private $name;
+
+    /**
+     * @var mixed
+     */
     private $options;
 
     public function setName($name)

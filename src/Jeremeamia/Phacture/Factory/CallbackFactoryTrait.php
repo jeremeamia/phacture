@@ -12,16 +12,6 @@ trait CallbackFactoryTrait
     protected $callbackMap = [];
 
     /**
-     * @param array $callbackMap
-     */
-    public function __construct(array $callbackMap = [])
-    {
-        foreach ($callbackMap as $name => $callback) {
-            $this->addCallback($name, $callback);
-        }
-    }
-
-    /**
      * @param string   $name
      * @param callable $callback
      *
@@ -56,7 +46,7 @@ trait CallbackFactoryTrait
         return $this;
     }
 
-    public function create($name, $options = [])
+    public function create($name = null, $options = [])
     {
         $options = $this->convertOptionsToArray($options);
 
@@ -67,7 +57,7 @@ trait CallbackFactoryTrait
         }
     }
 
-    public function canCreate($name, $options = [])
+    public function canCreate($name = null, $options = [])
     {
         return isset($this->callbackMap[$name]);
     }

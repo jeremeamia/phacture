@@ -22,12 +22,12 @@ abstract class AbstractFactoryDecorator implements FactoryDecoratorInterface
         $this->innerFactory = $factory;
     }
 
-    public function create($name, $options = [])
+    public function create($name = null, $options = [])
     {
         return $this->innerFactory->create($name, $options);
     }
 
-    public function canCreate($name, $options = [])
+    public function canCreate($name = null, $options = [])
     {
         return $this->innerFactory->canCreate($name, $options);
     }

@@ -19,20 +19,6 @@ trait NamespaceFactoryTrait
     protected $iterator;
 
     /**
-     * @param array $namespaces
-     */
-    public function __construct(array $namespaces = [])
-    {
-        foreach ($namespaces as $key => $value) {
-            if (is_string($key) && is_int($value)) {
-                $this->addNamespace($key, $value);
-            } else {
-                $this->addNamespace($value);
-            }
-        }
-    }
-
-    /**
      * @param string $namespace
      * @param int    $priority
      *
@@ -71,10 +57,12 @@ trait NamespaceFactoryTrait
 
     public function getFullyQualifiedClassName($name, array $options)
     {
-        foreach ($this->getIterator() as $namespace) {
-            $fqcn = $namespace . '\\' . $name;
-            if (class_exists($fqcn)) {
-                return $fqcn;
+        if (is_string($name)) {
+            foreach ($this->getIterator() as $namespace) {
+                $fqcn = $namespace . '\\' . $name;
+                if (class_exists($fqcn)) {
+                    return $fqcn;
+                }
             }
         }
 

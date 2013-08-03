@@ -5,6 +5,38 @@ namespace
     require file_exists($file = './vendor/autoload.php') ? $file : die('You need to do a Composer install first.');
 
     class Old_Foo_Bar_Lib {}
+
+    class SpecificClassFactory implements Jeremeamia\Phacture\Factory\FactoryInterface
+    {
+        use Jeremeamia\Phacture\Factory\OptionsOnlyFactoryTrait;
+
+        protected function doCreate(array $options)
+        {
+            $fqcn = $this->determineFcqn($options);
+
+            if (!$fqcn) {
+                throw new Jeremeamia\Phacture\Factory\FactoryException('Could not do it!');
+            }
+
+            return new $fqcn;
+        }
+
+        protected function decideIfCanCreate(array $options)
+        {
+            return (bool) $this->determineFcqn($options);
+        }
+
+        protected function determineFcqn(array $options)
+        {
+            $options = (new Jeremeamia\Phacture\Resolver\RequiredOptionsResolver)
+                ->setRequiredKeys(array('vendor', 'package', 'class'))
+                ->resolveOptions($options);
+
+            $fqcn = implode('\\', $options);
+
+            return class_exists($fqcn) ? $fqcn : null;
+        }
+    }
 }
 
 namespace Foo\Bar\Objects
@@ -19,18 +51,18 @@ namespace Foo\Bar\MoarObjects
     class PriorityTest {public $num = 1;}
 }
 
+namespace The\Specific
+{
+    class ClassName {}
+}
+
 namespace
 {
-    use Jeremeamia\Phacture\Factory\FactoryInterface;
     use Jeremeamia\Phacture\FactoryDecorator\FlyweightFactoryDecorator;
-    use Jeremeamia\Phacture\Factory\CallbackFactoryTrait;
-    class CallbackFactory implements FactoryInterface {use CallbackFactoryTrait;}
-    use Jeremeamia\Phacture\Factory\ClassMapFactoryTrait;
-    class ClassMapFactory implements FactoryInterface {use ClassMapFactoryTrait;}
-    use Jeremeamia\Phacture\Factory\CompositeFactoryTrait;
-    class CompositeFactory implements FactoryInterface {use CompositeFactoryTrait;}
-    use Jeremeamia\Phacture\Factory\NamespaceFactoryTrait;
-    class NamespaceFactory implements FactoryInterface {use NamespaceFactoryTrait;}
+    use Jeremeamia\Phacture\Factory\CallbackFactory;
+    use Jeremeamia\Phacture\Factory\ClassMapFactory;
+    use Jeremeamia\Phacture\Factory\CompositeFactory;
+    use Jeremeamia\Phacture\Factory\NamespaceFactory;
 
     $namespaceFactory = new NamespaceFactory();
     $namespaceFactory->addNamespace('Foo\\Bar\\Objects');
@@ -52,7 +84,8 @@ namespace
     });
 
     $compositeFactory = new CompositeFactory();
-    $compositeFactory->addFactory($namespaceFactory)
+    $compositeFactory
+        ->addFactory($namespaceFactory)
         ->addFactory($classMapFactory)
         ->addFactory($callbackFactory, 10);
 
@@ -77,4 +110,13 @@ namespace
     // Test that the factory prioritization is correct
     $objTest = $compositeFactory->create('priorityTest');
     assert('$objTest->num === 2');
+
+    // Test the specific class factory
+    $specificClassFactory = new SpecificClassFactory();
+    $specificClass = $specificClassFactory->create([
+        'vendor'  => 'The',
+        'package' => 'Specific',
+        'class'   => 'ClassName',
+    ]);
+    assert('$specificClass instanceof \The\Specific\ClassName');
 }

@@ -22,7 +22,7 @@ class OptionsResolvingFactoryDecorator extends AbstractFactoryDecorator
         $this->optionsResolver = $optionsResolver;
     }
 
-    public function create($name, $options = [])
+    public function create($name = null, $options = [])
     {
         return $this->innerFactory->create($name, $this->optionsResolver->resolveOptions($options));
     }

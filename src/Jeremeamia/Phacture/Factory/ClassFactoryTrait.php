@@ -9,7 +9,7 @@ trait ClassFactoryTrait
 {
     use FactoryTrait;
 
-    public function create($name, $options = [])
+    public function create($name = null, $options = [])
     {
         $options = $this->convertOptionsToArray($options);
 
@@ -20,7 +20,7 @@ trait ClassFactoryTrait
         }
     }
 
-    public function canCreate($name, $options = [])
+    public function canCreate($name = null, $options = [])
     {
         $options = $this->convertOptionsToArray($options);
 

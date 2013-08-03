@@ -14,8 +14,8 @@ trait FactoryTrait
     /**
      * Allows invocation of the factory to trigger object creation
      *
-     * @param string $name    Name of the object to create
-     * @param mixed  $options Options for the object creation
+     * @param mixed $name    Name or identifying value representing the object to create
+     * @param mixed $options Options for the object creation
      *
      * @return mixed The object that was instantiated
      */

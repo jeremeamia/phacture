@@ -12,16 +12,6 @@ trait ClassMapFactoryTrait
     protected $classMap = [];
 
     /**
-     * @param array $classMap
-     */
-    public function __construct(array $classMap = array())
-    {
-        foreach ($classMap as $name => $fcqn) {
-            $this->addClass($name, $fcqn);
-        }
-    }
-
-    /**
      * @param string $name
      * @param string $fqcn
      *
@@ -56,7 +46,7 @@ trait ClassMapFactoryTrait
 
     public function getFullyQualifiedClassName($name, array $options = array())
     {
-        if (isset($this->classMap[$name]) && class_exists($this->classMap[$name])) {
+        if (is_string($name) && isset($this->classMap[$name]) && class_exists($this->classMap[$name])) {
             return $this->classMap[$name];
         }
 

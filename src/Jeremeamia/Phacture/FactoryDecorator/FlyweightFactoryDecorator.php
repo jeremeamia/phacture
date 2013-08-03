@@ -19,7 +19,7 @@ class FlyweightFactoryDecorator extends AbstractFactoryDecorator
     /**
      * {@inheritdoc}
      */
-    public function create($name, $options = [])
+    public function create($name = null, $options = [])
     {
         $options = $this->convertOptionsToArray($options);
         $key = $this->calculateKey($name, $options);
