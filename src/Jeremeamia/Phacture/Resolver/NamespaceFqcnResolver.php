@@ -1,22 +1,20 @@
 <?php
 
-namespace Jeremeamia\Phacture\Factory;
+namespace Jeremeamia\Phacture\Resolver;
 
 use Jeremeamia\Phacture\PrioritizedRecursiveArrayIterator;
 
-trait NamespaceFactoryTrait
+class NamespaceFqcnResolver implements FqcnResolverInterface, \IteratorAggregate
 {
-    use ClassFactoryTrait;
-
     /**
      * @var array
      */
-    protected $namespaces = [];
+    private $namespaces = [];
 
     /**
      * @var \RecursiveIteratorIterator
      */
-    protected $iterator;
+    private $iterator;
 
     /**
      * @param string $namespace
@@ -55,20 +53,6 @@ trait NamespaceFactoryTrait
         return $this;
     }
 
-    public function getFullyQualifiedClassName($name, array $options)
-    {
-        if (is_string($name)) {
-            foreach ($this->getIterator() as $namespace) {
-                $fqcn = $namespace . '\\' . $name;
-                if (class_exists($fqcn)) {
-                    return $fqcn;
-                }
-            }
-        }
-
-        return null;
-    }
-
     public function getIterator()
     {
          if (!$this->iterator) {
@@ -78,5 +62,19 @@ trait NamespaceFactoryTrait
          }
 
          return $this->iterator;
+    }
+
+    public function resolveFqcn($alias)
+    {
+        if (is_string($alias)) {
+            foreach ($this->getIterator() as $namespace) {
+                $fqcn = $namespace . '\\' . $alias;
+                if (class_exists($fqcn)) {
+                    return $fqcn;
+                }
+            }
+        }
+
+        return null;
     }
 }

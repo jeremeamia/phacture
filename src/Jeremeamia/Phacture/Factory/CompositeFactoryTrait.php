@@ -6,7 +6,7 @@ use Jeremeamia\Phacture\PrioritizedRecursiveArrayIterator;
 
 trait CompositeFactoryTrait
 {
-    use FactoryTrait;
+    use AliasFactoryTrait;
 
     /**
      * @var array
@@ -19,12 +19,12 @@ trait CompositeFactoryTrait
     protected $iterator;
 
     /**
-     * @param FactoryInterface $factory
-     * @param int              $priority
+     * @param AliasFactoryInterface $factory
+     * @param int                   $priority
      *
      * @return self
      */
-    public function addFactory(FactoryInterface $factory, $priority = 0)
+    public function addFactory(AliasFactoryInterface $factory, $priority = 0)
     {
         if (!isset($this->factories[$priority])) {
             $this->factories[$priority] = [];
@@ -36,9 +36,9 @@ trait CompositeFactoryTrait
         return $this;
     }
 
-    public function create($name = null, $options = [])
+    public function create($name, $options = [])
     {
-        /** @var $factory FactoryInterface */
+        /** @var $factory AliasFactoryInterface */
         foreach ($this->getIterator() as $factory) {
             if ($factory->canCreate($name)) {
                 return $factory->create($name, $options);
@@ -48,9 +48,9 @@ trait CompositeFactoryTrait
         throw (new FactoryException)->setName($name)->setOptions($options);
     }
 
-    public function canCreate($name = null, $options = [])
+    public function canCreate($name)
     {
-        /** @var $factory FactoryInterface */
+        /** @var $factory AliasFactoryInterface */
         foreach ($this->getIterator() as $factory) {
             if ($factory->canCreate($name)) {
                 return true;

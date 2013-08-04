@@ -2,12 +2,12 @@
 
 namespace Jeremeamia\Phacture\Resolver;
 
-interface NameResolverInterface
+interface AliasResolverInterface
 {
     /**
      * @param mixed $options
      *
      * @return string
      */
-    public function resolveName($options);
+    public function resolveAlias($options);
 }

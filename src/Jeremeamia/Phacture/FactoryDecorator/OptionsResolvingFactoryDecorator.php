@@ -3,7 +3,7 @@
 namespace Jeremeamia\Phacture\FactoryDecorator;
 
 use Jeremeamia\Phacture\Resolver\OptionsResolverInterface;
-use Jeremeamia\Phacture\Factory\FactoryInterface;
+use Jeremeamia\Phacture\Factory\AliasFactoryInterface;
 
 class OptionsResolvingFactoryDecorator extends AbstractFactoryDecorator
 {
@@ -13,16 +13,16 @@ class OptionsResolvingFactoryDecorator extends AbstractFactoryDecorator
     protected $optionsResolver;
 
     /**
-     * @param FactoryInterface         $factory
+     * @param AliasFactoryInterface         $factory
      * @param OptionsResolverInterface $optionsResolver
      */
-    public function __construct(FactoryInterface $factory, OptionsResolverInterface $optionsResolver)
+    public function __construct(AliasFactoryInterface $factory, OptionsResolverInterface $optionsResolver)
     {
         $this->innerFactory = $factory;
         $this->optionsResolver = $optionsResolver;
     }
 
-    public function create($name = null, $options = [])
+    public function create($name, $options = [])
     {
         return $this->innerFactory->create($name, $this->optionsResolver->resolveOptions($options));
     }

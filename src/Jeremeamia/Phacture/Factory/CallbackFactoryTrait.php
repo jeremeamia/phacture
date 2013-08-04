@@ -4,7 +4,7 @@ namespace Jeremeamia\Phacture\Factory;
 
 trait CallbackFactoryTrait
 {
-    use FactoryTrait;
+    use AliasFactoryTrait;
 
     /**
      * @var array
@@ -46,7 +46,7 @@ trait CallbackFactoryTrait
         return $this;
     }
 
-    public function create($name = null, $options = [])
+    public function create($name, $options = [])
     {
         $options = $this->convertOptionsToArray($options);
 
@@ -57,7 +57,7 @@ trait CallbackFactoryTrait
         }
     }
 
-    public function canCreate($name = null, $options = [])
+    public function canCreate($name)
     {
         return isset($this->callbackMap[$name]);
     }

@@ -2,17 +2,17 @@
 
 namespace Jeremeamia\Phacture\FactoryDecorator;
 
-use Jeremeamia\Phacture\Factory\FactoryInterface;
+use Jeremeamia\Phacture\Factory\AliasFactoryInterface;
 
 /**
  * Interface for factory decorators.
  */
-interface FactoryDecoratorInterface extends FactoryInterface
+interface FactoryDecoratorInterface extends AliasFactoryInterface
 {
     /**
      * Returns the factory that is being decorated
      *
-     * @return FactoryInterface
+     * @return AliasFactoryInterface
      */
     public function getInnerFactory();
 }

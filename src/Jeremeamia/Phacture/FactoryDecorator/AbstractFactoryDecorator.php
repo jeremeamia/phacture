@@ -2,34 +2,34 @@
 
 namespace Jeremeamia\Phacture\FactoryDecorator;
 
-use Jeremeamia\Phacture\Factory\FactoryInterface;
-use Jeremeamia\Phacture\Factory\FactoryTrait;
+use Jeremeamia\Phacture\Factory\AliasFactoryInterface;
+use Jeremeamia\Phacture\Factory\AliasFactoryTrait;
 
 abstract class AbstractFactoryDecorator implements FactoryDecoratorInterface
 {
-    use FactoryTrait;
+    use AliasFactoryTrait;
 
     /**
-     * @var FactoryInterface
+     * @var AliasFactoryInterface
      */
     protected $innerFactory;
 
     /**
-     * @param FactoryInterface $factory
+     * @param AliasFactoryInterface $factory
      */
-    public function __construct(FactoryInterface $factory)
+    public function __construct(AliasFactoryInterface $factory)
     {
         $this->innerFactory = $factory;
     }
 
-    public function create($name = null, $options = [])
+    public function create($name, $options = [])
     {
         return $this->innerFactory->create($name, $options);
     }
 
-    public function canCreate($name = null, $options = [])
+    public function canCreate($name)
     {
-        return $this->innerFactory->canCreate($name, $options);
+        return $this->innerFactory->canCreate($name);
     }
 
     public function getInnerFactory()

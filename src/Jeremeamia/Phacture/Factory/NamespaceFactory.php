@@ -2,21 +2,50 @@
 
 namespace Jeremeamia\Phacture\Factory;
 
-class NamespaceFactory implements FactoryInterface, \IteratorAggregate
+use Jeremeamia\Phacture\Instantiator\DefaultInstantiator;
+use Jeremeamia\Phacture\Instantiator\InstantiatorInterface;
+use Jeremeamia\Phacture\Resolver\NamespaceFqcnResolver;
+use Jeremeamia\Phacture\Resolver\FqcnResolverInterface;
+
+class NamespaceFactory implements AliasFactoryInterface
 {
-    use NamespaceFactoryTrait;
+    use ClassFactoryTrait;
 
     /**
-     * @param array $namespaces
+     * @var NamespaceFqcnResolver
      */
-    public function __construct(array $namespaces = [])
+    protected $fqcnResolver;
+
+    public function __construct(array $namespaces = [], InstantiatorInterface $instantiator = null)
     {
-        foreach ($namespaces as $key => $value) {
-            if (is_string($key) && is_int($value)) {
-                $this->addNamespace($key, $value);
-            } else {
-                $this->addNamespace($value);
-            }
+        $this->setFqcnResolver(new NamespaceFqcnResolver);
+        $this->setInstantiator($instantiator ?: new DefaultInstantiator);
+
+        foreach ($namespaces as $namespace) {
+            $this->addNamespace($namespace);
         }
+    }
+
+    public function setFqcnResolver(FqcnResolverInterface $fqcnResolver)
+    {
+        if (!($fqcnResolver instanceof NamespaceFqcnResolver)) {
+            throw new \InvalidArgumentException('A NamespaceFactory only supports the NamespaceFqcnResolver.');
+        }
+
+        $this->fqcnResolver = $fqcnResolver;
+    }
+
+    public function addNamespace($namespace)
+    {
+        $this->fqcnResolver->addNamespace($namespace);
+
+        return $this;
+    }
+
+    public function removeNamespace($namespace)
+    {
+        $this->fqcnResolver->removeNamespace($namespace);
+
+        return $this;
     }
 }
