@@ -26,12 +26,8 @@ class NamespaceFactory implements AliasFactoryInterface
         }
     }
 
-    public function setFqcnResolver(FqcnResolverInterface $fqcnResolver)
+    public function setFqcnResolver(NamespaceFqcnResolver $fqcnResolver)
     {
-        if (!($fqcnResolver instanceof NamespaceFqcnResolver)) {
-            throw new \InvalidArgumentException('A NamespaceFactory only supports the NamespaceFqcnResolver.');
-        }
-
         $this->fqcnResolver = $fqcnResolver;
     }
 

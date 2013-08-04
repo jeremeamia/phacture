@@ -25,21 +25,28 @@ trait ClassFactoryTrait
     public function setFqcnResolver(FqcnResolverInterface $fqcnResolver)
     {
         $this->fqcnResolver = $fqcnResolver;
+
+        return $this;
     }
 
     public function setInstantiator(InstantiatorInterface $instantiator)
     {
         $this->instantiator = $instantiator;
+
+        return $this;
     }
 
     public function create($name, $options = [])
     {
         $options = $this->convertOptionsToArray($options);
+        $fqcn = $this->fqcnResolver->resolveFqcn($name);
 
-        if ($fqcn = $this->fqcnResolver->resolveFqcn($name)) {
+        try {
             return $this->instantiator->instantiateClass($fqcn, $options);
-        } else {
-            throw (new FactoryException)->setName($name)->setOptions($options);
+        } catch (FactoryException $e) {
+            throw $e->setName($name)
+                ->setFqcn($fqcn)
+                ->setOptions($options);
         }
     }
 

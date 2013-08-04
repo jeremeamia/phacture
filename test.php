@@ -3,8 +3,14 @@
 // FIXTURES
 
 namespace {
+    use Jeremeamia\Phacture\Factory\OptionsFactoryInterface as OFI;
     require file_exists($file = './vendor/autoload.php') ? $file : die('You need to do a Composer install first.');
     class Old_Foo_Bar_Lib {}
+    class Old_Foo_Bar_Lib_Factory implements OFI {public function create($options = []) {
+        $instance = new Old_Foo_Bar_Lib;
+        $instance->message = $options['message'];
+        return $instance;
+    }}
     class SpecificClassFactory implements Jeremeamia\Phacture\Factory\OptionsFactoryInterface
     {
         public function create($options = []) {
@@ -47,13 +53,17 @@ namespace {
     use Jeremeamia\Phacture\Factory\ClassMapFactory;
     use Jeremeamia\Phacture\Factory\CompositeFactory;
     use Jeremeamia\Phacture\Factory\NamespaceFactory;
+    use Jeremeamia\Phacture\Instantiator\FactoryMapInstantiator;
 
     // Create factory instances
     $namespaceFactory = (new NamespaceFactory)
         ->addNamespace('Foo\\Bar\\Objects')
         ->addNamespace('Foo\\Bar\\MoarObjects');
     $classMapFactory = (new ClassMapFactory)
-        ->addClass('fooBarLib', 'Old_Foo_Bar_Lib');
+        ->addClass('fooBarLib', 'Old_Foo_Bar_Lib')
+        ->setInstantiator((new FactoryMapInstantiator)
+            ->addFactory('Old_Foo_Bar_Lib', 'Old_Foo_Bar_Lib_Factory')
+        );
     $callbackFactory = (new CallbackFactory)
         ->addCallback('fooBarObj', function () {
             $object = new stdClass;
@@ -72,10 +82,11 @@ namespace {
     $flyweightFactory = new FlyweightFactoryDecorator($compositeFactory);
 
     // Test the flyweight
-    $obj1 = $flyweightFactory->create('fooBarLib');
-    $obj2 = $flyweightFactory->create('fooBarLib');
+    $obj1 = $flyweightFactory->create('fooBarLib', ['message' => 'HELLO_FROM_FACTORY']);
+    $obj2 = $flyweightFactory->create('fooBarLib', ['message' => 'HELLO_FROM_FACTORY']);
     assert('$obj1 instanceof Old_Foo_Bar_Lib');
     assert('$obj1 === $obj2');
+    assert('$obj1->message === "HELLO_FROM_FACTORY"');
 
     // Test composite behavior and each of the factory types
     $objFoo = $compositeFactory->create('foo');

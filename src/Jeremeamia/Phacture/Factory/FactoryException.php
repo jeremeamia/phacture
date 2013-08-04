@@ -17,17 +17,20 @@ class FactoryException extends \RuntimeException
      */
     private $options;
 
+    /**
+     * @var string
+     */
+    private $fqcn;
+
     public function setName($name)
     {
-        $this->name = $name;
-
-        if (!$this->message) {
-            if (is_string($name)) {
-                $this->message = "Could not instantiate an object using on the provided name \"{$name}\".";
-            } else {
-                $this->message = "Could not instantiate an object because the name provided was not a string.";
-            }
+        if (!$this->name) {
+            $message = 'Could not instantiate an object using the provided alias';
+            $message .= is_string($name) ? " \"{$name}\"." : '.';
+            $this->message = $message . ($this->message ? ' ' . $this->message : '');
         }
+
+        $this->name = $name;
 
         return $this;
     }
@@ -47,5 +50,17 @@ class FactoryException extends \RuntimeException
     public function getOptions()
     {
         return $this->options;
+    }
+
+    public function setFqcn($fqcn)
+    {
+        $this->fqcn = $fqcn;
+
+        return $this;
+    }
+
+    public function getFqcn()
+    {
+        return $this->fqcn;
     }
 }

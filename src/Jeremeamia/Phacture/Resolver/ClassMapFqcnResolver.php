@@ -18,11 +18,6 @@ class ClassMapFqcnResolver implements FqcnResolverInterface
      */
     public function addClass($alias, $fqcn)
     {
-        $fqcn = trim($fqcn, '\\');
-        if (!class_exists($fqcn)) {
-            throw new \InvalidArgumentException("The {$fqcn} class does not exist.");
-        }
-
         $this->classes[$alias] = $fqcn;
 
         return $this;

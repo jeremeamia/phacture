@@ -26,12 +26,8 @@ class ClassMapFactory implements AliasFactoryInterface
         }
     }
 
-    public function setFqcnResolver(FqcnResolverInterface $fqcnResolver)
+    public function setFqcnResolver(ClassMapFqcnResolver $fqcnResolver)
     {
-        if (!($fqcnResolver instanceof ClassMapFqcnResolver)) {
-            throw new \InvalidArgumentException('A ClassMapFactory only supports the ClassMapFqcnResolver.');
-        }
-
         $this->fqcnResolver = $fqcnResolver;
     }
 
