@@ -16,6 +16,13 @@ class NamespaceFqcnResolver implements FqcnResolverInterface, \IteratorAggregate
      */
     private $iterator;
 
+    public function __construct(array $namespaces = [])
+    {
+        foreach ($namespaces as $namespace) {
+            $this->addNamespace($namespace);
+        }
+    }
+
     /**
      * @param string $namespace
      * @param int    $priority

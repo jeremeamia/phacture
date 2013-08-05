@@ -18,12 +18,8 @@ class ClassMapFactory implements AliasFactoryInterface
 
     public function __construct(array $classMap = [], InstantiatorInterface $instantiator = null)
     {
-        $this->setFqcnResolver(new ClassMapFqcnResolver);
+        $this->setFqcnResolver(new ClassMapFqcnResolver($classMap));
         $this->setInstantiator($instantiator ?: new DefaultInstantiator);
-
-        foreach ($classMap as $alias => $fqcn) {
-            $this->addClass($alias, $fqcn);
-        }
     }
 
     public function setFqcnResolver(ClassMapFqcnResolver $fqcnResolver)

@@ -9,6 +9,13 @@ class ClassMapFqcnResolver implements FqcnResolverInterface
      */
     private $classes = [];
 
+    public function __construct(array $classes = [])
+    {
+        foreach ($classes as $alias => $fqcn) {
+            $this->addClass($alias, $fqcn);
+        }
+    }
+
     /**
      * @param string $alias
      * @param string $fqcn

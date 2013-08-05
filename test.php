@@ -61,9 +61,7 @@ namespace {
         ->addNamespace('Foo\\Bar\\MoarObjects');
     $classMapFactory = (new ClassMapFactory)
         ->addClass('fooBarLib', 'Old_Foo_Bar_Lib')
-        ->setInstantiator((new FactoryMapInstantiator)
-            ->addFactory('Old_Foo_Bar_Lib', 'Old_Foo_Bar_Lib_Factory')
-        );
+        ->setInstantiator((new FactoryMapInstantiator)->addFactory('Old_Foo_Bar_Lib', 'Old_Foo_Bar_Lib_Factory'));
     $callbackFactory = (new CallbackFactory)
         ->addCallback('fooBarObj', function () {
             $object = new stdClass;

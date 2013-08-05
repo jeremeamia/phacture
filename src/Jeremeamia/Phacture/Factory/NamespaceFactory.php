@@ -18,12 +18,8 @@ class NamespaceFactory implements AliasFactoryInterface
 
     public function __construct(array $namespaces = [], InstantiatorInterface $instantiator = null)
     {
-        $this->setFqcnResolver(new NamespaceFqcnResolver);
+        $this->setFqcnResolver(new NamespaceFqcnResolver($namespaces));
         $this->setInstantiator($instantiator ?: new DefaultInstantiator);
-
-        foreach ($namespaces as $namespace) {
-            $this->addNamespace($namespace);
-        }
     }
 
     public function setFqcnResolver(NamespaceFqcnResolver $fqcnResolver)
