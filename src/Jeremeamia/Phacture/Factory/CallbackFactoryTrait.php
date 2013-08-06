@@ -4,67 +4,57 @@ namespace Jeremeamia\Phacture\Factory;
 
 trait CallbackFactoryTrait
 {
-    use AliasFactoryTrait;
+    use FactoryTrait;
 
     /**
      * @var array
      */
-    protected $callbackMap = [];
+    protected $callbacks = [];
 
     /**
-     * @param string   $name
+     * @param string   $identifier
      * @param callable $callback
      *
      * @return self
      */
-    public function addCallback($name, callable $callback)
+    public function addCallback($identifier, callable $callback)
     {
-        $this->callbackMap[$name] = $callback;
+        $this->callbacks[$identifier] = $callback;
 
         return $this;
     }
 
     /**
-     * @param string $name
-     *
-     * @return bool
-     */
-    public function hasCallback($name)
-    {
-        return isset($this->callbackMap[$name]);
-    }
-
-    /**
-     * @param string $name
+     * @param string $identifier
      *
      * @return self
      */
-    public function removeCallback($name)
+    public function removeCallback($identifier)
     {
-        unset($this->callbackMap[$name]);
+        unset($this->callbacks[$identifier]);
 
         return $this;
     }
 
-    public function create($name, $options = [])
+    public function create($identifier, $options = [])
     {
         $options = $this->convertOptionsToArray($options);
 
-        if (isset($this->callbackMap[$name])) {
-            return $this->callbackMap[$name]($options);
+        if (isset($this->callbacks[$identifier])) {
+            return $this->callbacks[$identifier]($options);
         } else {
-            throw (new FactoryException)->setName($name)->setOptions($options);
+            throw (new FactoryException)->setIdentifier($identifier)->setOptions($options);
         }
     }
 
-    public function canCreate($name)
+    public function canCreate($identifier)
     {
-        return isset($this->callbackMap[$name]);
+        return isset($this->callbacks[$identifier]);
     }
 
     public function getIterator()
     {
-        return new \ArrayIterator($this->callbackMap);
+        return new \ArrayIterator($this->callbacks);
     }
 }
 

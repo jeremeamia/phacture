@@ -2,7 +2,7 @@
 
 namespace Jeremeamia\Phacture\Factory;
 
-class CallbackFactory implements AliasFactoryInterface, \IteratorAggregate
+class CallbackFactory implements FactoryInterface, \IteratorAggregate
 {
     use CallbackFactoryTrait;
 

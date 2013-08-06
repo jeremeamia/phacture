@@ -2,7 +2,7 @@
 
 namespace Jeremeamia\Phacture\Factory;
 
-class CompositeFactory implements AliasFactoryInterface, \IteratorAggregate
+class CompositeFactory implements FactoryInterface, \IteratorAggregate
 {
     use CompositeFactoryTrait;
 

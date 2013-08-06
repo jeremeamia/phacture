@@ -2,43 +2,15 @@
 
 namespace Jeremeamia\Phacture\Factory;
 
-use Jeremeamia\Phacture\Instantiator\DefaultInstantiator;
-use Jeremeamia\Phacture\Instantiator\InstantiatorInterface;
-use Jeremeamia\Phacture\Resolver\ClassMapFqcnResolver;
-use Jeremeamia\Phacture\Resolver\FqcnResolverInterface;
-
-class ClassMapFactory implements AliasFactoryInterface
+class ClassMapFactory implements FactoryInterface
 {
-    use ClassFactoryTrait;
+    use ClassMapFactoryTrait;
 
-    /**
-     * @var ClassMapFqcnResolver
-     */
-    protected $fqcnResolver;
-
-    public function __construct(array $classMap = [], InstantiatorInterface $instantiator = null)
+    public function __construct(array $classes = [])
     {
-        $this->setFqcnResolver(new ClassMapFqcnResolver($classMap));
-        $this->setInstantiator($instantiator ?: new DefaultInstantiator);
-    }
-
-    public function setFqcnResolver(ClassMapFqcnResolver $fqcnResolver)
-    {
-        $this->fqcnResolver = $fqcnResolver;
-    }
-
-    public function addClass($alias, $fqcn)
-    {
-        $this->fqcnResolver->addClass($alias, $fqcn);
-
-        return $this;
-    }
-
-    public function removeClass($alias)
-    {
-        $this->fqcnResolver->removeClass($alias);
-
-        return $this;
+        foreach ($classes as $identifier => $fqcn) {
+            $this->addClass($identifier, $fqcn);
+        }
     }
 }
 

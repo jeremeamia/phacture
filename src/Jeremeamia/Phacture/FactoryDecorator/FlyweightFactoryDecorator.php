@@ -19,17 +19,17 @@ class FlyweightFactoryDecorator extends AbstractFactoryDecorator
     /**
      * {@inheritdoc}
      */
-    public function create($name, $options = [])
+    public function create($identifier, $options = [])
     {
         $options = $this->convertOptionsToArray($options);
-        $key = $this->calculateKey($name, $options);
+        $key = $this->calculateKey($identifier, $options);
 
         if (isset($options[self::OPTION_USE_NEW]) && $options[self::OPTION_USE_NEW]) {
             unset($this->itemCache[$key], $options[self::OPTION_USE_NEW]);
         }
 
         if (!isset($this->itemCache[$key])) {
-            $this->itemCache[$key] = $this->innerFactory->create($name, $options);
+            $this->itemCache[$key] = $this->innerFactory->create($identifier, $options);
         }
 
         return $this->itemCache[$key];
@@ -50,13 +50,13 @@ class FlyweightFactoryDecorator extends AbstractFactoryDecorator
     /**
      * Determines the key used to cache the objects. This should be overridden if more complex logic is required
      *
-     * @param string $name
+     * @param string $identifier
      * @param array  $options
      *
      * @return string
      */
-    protected function calculateKey($name, array $options)
+    protected function calculateKey($identifier, array $options)
     {
-        return $name;
+        return $identifier;
     }
 }

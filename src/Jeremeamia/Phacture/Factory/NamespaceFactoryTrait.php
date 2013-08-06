@@ -1,15 +1,21 @@
 <?php
 
-namespace Jeremeamia\Phacture\Resolver;
+namespace Jeremeamia\Phacture\Factory;
 
 use Jeremeamia\Phacture\PrioritizedRecursiveArrayIterator;
 
-class NamespaceFqcnResolver implements FqcnResolverInterface, \IteratorAggregate
+trait NamespaceFactoryTrait
 {
+    use ClassFactoryTrait;
+
     /**
      * @var array
      */
     private $namespaces = [];
+
+    private $prefix = '';
+
+    private $suffix = '';
 
     /**
      * @var \RecursiveIteratorIterator
@@ -60,6 +66,16 @@ class NamespaceFqcnResolver implements FqcnResolverInterface, \IteratorAggregate
         return $this;
     }
 
+    public function setPrefix($prefix)
+    {
+        $this->prefix = $prefix;
+    }
+
+    public function setSuffix($suffix)
+    {
+        $this->suffix = $suffix;
+    }
+
     public function getIterator()
     {
          if (!$this->iterator) {
@@ -71,11 +87,11 @@ class NamespaceFqcnResolver implements FqcnResolverInterface, \IteratorAggregate
          return $this->iterator;
     }
 
-    public function resolveFqcn($alias)
+    public function resolveFqcn($identifier)
     {
-        if (is_string($alias)) {
+        if (is_string($identifier)) {
             foreach ($this->getIterator() as $namespace) {
-                $fqcn = $namespace . '\\' . $alias;
+                $fqcn = "{$namespace}\\{$this->prefix}{$identifier}{$this->suffix}";
                 if (class_exists($fqcn)) {
                     return $fqcn;
                 }

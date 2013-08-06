@@ -60,8 +60,7 @@ namespace {
         ->addNamespace('Foo\\Bar\\Objects')
         ->addNamespace('Foo\\Bar\\MoarObjects');
     $classMapFactory = (new ClassMapFactory)
-        ->addClass('fooBarLib', 'Old_Foo_Bar_Lib')
-        ->setInstantiator((new FactoryMapInstantiator)->addFactory('Old_Foo_Bar_Lib', 'Old_Foo_Bar_Lib_Factory'));
+        ->addClass('fooBarLib', 'Old_Foo_Bar_Lib');
     $callbackFactory = (new CallbackFactory)
         ->addCallback('fooBarObj', function () {
             $object = new stdClass;
@@ -84,7 +83,6 @@ namespace {
     $obj2 = $flyweightFactory->create('fooBarLib', ['message' => 'HELLO_FROM_FACTORY']);
     assert('$obj1 instanceof Old_Foo_Bar_Lib');
     assert('$obj1 === $obj2');
-    assert('$obj1->message === "HELLO_FROM_FACTORY"');
 
     // Test composite behavior and each of the factory types
     $objFoo = $compositeFactory->create('foo');

@@ -10,48 +10,64 @@ use Jeremeamia\Phacture\Resolver\FqcnResolverInterface;
  */
 trait ClassFactoryTrait
 {
-    use AliasFactoryTrait;
+    use FactoryTrait;
 
-    /**
-     * @var FqcnResolverInterface
-     */
-    protected $fqcnResolver;
-
-    /**
-     * @var InstantiatorInterface
-     */
-    protected $instantiator;
-
-    public function setFqcnResolver(FqcnResolverInterface $fqcnResolver)
-    {
-        $this->fqcnResolver = $fqcnResolver;
-
-        return $this;
-    }
-
-    public function setInstantiator(InstantiatorInterface $instantiator)
-    {
-        $this->instantiator = $instantiator;
-
-        return $this;
-    }
-
-    public function create($name, $options = [])
+    public function create($identifier, $options = [])
     {
         $options = $this->convertOptionsToArray($options);
-        $fqcn = $this->fqcnResolver->resolveFqcn($name);
+        $fqcn = $this->resolveFqcn($identifier);
 
         try {
-            return $this->instantiator->instantiateClass($fqcn, $options);
+            return $this->instantiateClass($fqcn, $options);
         } catch (FactoryException $e) {
-            throw $e->setName($name)
-                ->setFqcn($fqcn)
-                ->setOptions($options);
+            throw $e->setIdentifier($identifier)->setFqcn($fqcn)->setOptions($options);
         }
     }
 
-    public function canCreate($name)
+    public function canCreate($identifier)
     {
-        return (bool) $this->fqcnResolver->resolveFqcn($name);
+        return (bool) $this->resolveFqcn($identifier);
     }
+
+    /**
+     * @param string $fqcn
+     * @param array  $options
+     *
+     * @return mixed
+     */
+    protected function instantiateClass($fqcn, array $options)
+    {
+        $factoryMethod = array($fqcn, 'factory');
+        if (is_callable($factoryMethod)) {
+            return $factoryMethod($options);
+        } else {
+            return $this->instantiateClassWithConstructor($fqcn, $options);
+        }
+    }
+
+    protected function instantiateClassWithConstructor($fqcn, array $args)
+    {
+        $count = count($args);
+
+        if ($count === 0) {
+            return new $fqcn;
+        } elseif ($count === 1) {
+            return new $fqcn($args[0]);
+        } elseif ($count === 2) {
+            return new $fqcn($args[0], $args[1]);
+        } elseif ($count === 3) {
+            return new $fqcn($args[0], $args[1], $args[2]);
+        } else {
+            $class = new \ReflectionClass($fqcn);
+
+            return $class->newInstanceArgs($args);
+        }
+    }
+
+    /**
+     * @param $identifier
+     *
+     * @return bool
+     */
+    abstract protected function resolveFqcn($identifier);
 }

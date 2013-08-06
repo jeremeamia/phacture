@@ -21,10 +21,10 @@ class InitializerFactoryDecorator extends AbstractFactoryDecorator
         return $this;
     }
 
-    public function create($name, $options = [])
+    public function create($identifier, $options = [])
     {
         $options = $this->convertOptionsToArray($options);
-        $instance = $this->innerFactory->create($name, $options);
+        $instance = $this->innerFactory->create($identifier, $options);
 
         /** @var callable $initializer */
         foreach ($this->initializers as $initializer) {

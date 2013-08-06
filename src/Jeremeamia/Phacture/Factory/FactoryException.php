@@ -10,34 +10,29 @@ class FactoryException extends \RuntimeException
     /**
      * @var string
      */
-    private $name;
+    private $identifier;
 
     /**
      * @var mixed
      */
     private $options;
 
-    /**
-     * @var string
-     */
-    private $fqcn;
-
-    public function setName($name)
+    public function setIdentifier($identifier)
     {
-        if (!$this->name) {
+        if (!$this->identifier) {
             $message = 'Could not instantiate an object using the provided alias';
-            $message .= is_string($name) ? " \"{$name}\"." : '.';
+            $message .= is_string($identifier) ? " \"{$identifier}\"." : '.';
             $this->message = $message . ($this->message ? ' ' . $this->message : '');
         }
 
-        $this->name = $name;
+        $this->identifier = $identifier;
 
         return $this;
     }
 
-    public function getName()
+    public function getIdentifier()
     {
-        return $this->name;
+        return $this->identifier;
     }
 
     public function setOptions($options)
@@ -50,17 +45,5 @@ class FactoryException extends \RuntimeException
     public function getOptions()
     {
         return $this->options;
-    }
-
-    public function setFqcn($fqcn)
-    {
-        $this->fqcn = $fqcn;
-
-        return $this;
-    }
-
-    public function getFqcn()
-    {
-        return $this->fqcn;
     }
 }
