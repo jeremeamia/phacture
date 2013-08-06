@@ -12,6 +12,11 @@ trait ClassMapFactoryTrait
     private $classes = [];
 
     /**
+     * @var string
+     */
+    private $defaultClass;
+
+    /**
      * @param string $identifier
      * @param string $fqcn
      *
@@ -36,10 +41,17 @@ trait ClassMapFactoryTrait
         return $this;
     }
 
+    public function setDefaultClass($fqcn)
+    {
+        $this->defaultClass = $fqcn;
+    }
+
     public function resolveFqcn($identifier)
     {
         if (is_string($identifier) && isset($this->classes[$identifier]) && class_exists($this->classes[$identifier])) {
             return $this->classes[$identifier];
+        } elseif ($this->defaultClass && class_exists($this->defaultClass)) {
+            return $this->defaultClass;
         }
 
         return null;

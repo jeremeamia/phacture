@@ -90,8 +90,9 @@ trait NamespaceFactoryTrait
     public function resolveFqcn($identifier)
     {
         if (is_string($identifier)) {
+            $identifier = "{$this->prefix}{$identifier}{$this->suffix}";
             foreach ($this->getIterator() as $namespace) {
-                $fqcn = "{$namespace}\\{$this->prefix}{$identifier}{$this->suffix}";
+                $fqcn = "{$namespace}\\{$identifier}";
                 if (class_exists($fqcn)) {
                     return $fqcn;
                 }

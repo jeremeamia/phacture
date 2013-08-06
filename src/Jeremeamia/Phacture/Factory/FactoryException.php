@@ -20,7 +20,7 @@ class FactoryException extends \RuntimeException
     public function setIdentifier($identifier)
     {
         if (!$this->identifier) {
-            $message = 'Could not instantiate an object using the provided alias';
+            $message = 'Could not instantiate an object using the provided identifier';
             $message .= is_string($identifier) ? " \"{$identifier}\"." : '.';
             $this->message = $message . ($this->message ? ' ' . $this->message : '');
         }

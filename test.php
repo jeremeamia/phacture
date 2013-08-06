@@ -34,6 +34,7 @@ namespace {
 namespace Foo\Bar\Objects {
     class Foo {}
     class Bar {}
+    class FizzBuzz {}
 }
 
 namespace Foo\Bar\MoarObjects {
@@ -48,17 +49,19 @@ namespace The\Specific {
 // TEST CODE
 
 namespace {
+    use Jeremeamia\Phacture\FactoryDecorator\AliasFactoryDecorator;
     use Jeremeamia\Phacture\FactoryDecorator\FlyweightFactoryDecorator;
     use Jeremeamia\Phacture\Factory\CallbackFactory;
     use Jeremeamia\Phacture\Factory\ClassMapFactory;
     use Jeremeamia\Phacture\Factory\CompositeFactory;
     use Jeremeamia\Phacture\Factory\NamespaceFactory;
-    use Jeremeamia\Phacture\Instantiator\FactoryMapInstantiator;
 
     // Create factory instances
     $namespaceFactory = (new NamespaceFactory)
         ->addNamespace('Foo\\Bar\\Objects')
         ->addNamespace('Foo\\Bar\\MoarObjects');
+    $namespaceFactory = (new AliasFactoryDecorator($namespaceFactory))
+        ->addAlias('fizz_buzz', 'FizzBuzz');
     $classMapFactory = (new ClassMapFactory)
         ->addClass('fooBarLib', 'Old_Foo_Bar_Lib');
     $callbackFactory = (new CallbackFactory)
@@ -93,6 +96,8 @@ namespace {
     assert('$objBaz instanceof \Foo\Bar\MoarObjects\Baz');
     $objFooBar = $compositeFactory->create('fooBarObj');
     assert('$objFooBar->foo === "bar"');
+    $objFB = $compositeFactory->create('fizz_buzz');
+    assert('$objFB instanceof \Foo\Bar\Objects\FizzBuzz');
 
     // Test that the factory prioritization is correct
     $objTest = $compositeFactory->create('priorityTest');
