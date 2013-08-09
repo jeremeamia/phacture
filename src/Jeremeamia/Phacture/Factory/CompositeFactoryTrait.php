@@ -70,4 +70,20 @@ trait CompositeFactoryTrait
 
         return $this->iterator;
     }
+
+    public function __call($method, $args)
+    {
+        foreach ($this->getIterator() as $factory) {
+            $callable = array($factory, $method);
+            try {
+                if (is_callable($callable)) {
+                    return call_user_func_array($callable, $args);
+                }
+            } catch (\BadMethodCallException $e) {
+                continue;
+            }
+        }
+
+        throw new \BadMethodCallException("The {$method} method did not exist on this or any inner factory objects.");
+    }
 }

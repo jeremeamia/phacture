@@ -39,6 +39,13 @@ abstract class AbstractFactoryDecorator implements FactoryDecoratorInterface
 
     public function __call($method, $args)
     {
-        return call_user_func_array(array($this->innerFactory, $method), $args);
+        $callable = array($this->innerFactory, $method);
+
+        if (is_callable($callable)) {
+            return call_user_func_array($callable, $args);
+        } else {
+            throw new \BadMethodCallException("The {$method} method did not exist on this or any decorated factory objects.");
+        }
+
     }
 }

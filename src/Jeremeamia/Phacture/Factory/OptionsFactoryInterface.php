@@ -8,7 +8,7 @@ namespace Jeremeamia\Phacture\Factory;
 interface OptionsFactoryInterface
 {
     /**
-     * Create and return an object specified by a name.
+     * Create and return an object using the provided options
      *
      * @param mixed $options Options for the object creation
      *
