@@ -4,7 +4,7 @@ namespace Jeremeamia\Phacture\Resolver;
 
 use Jeremeamia\Phacture\HandlesOptionsTrait;
 
-class RequiredOptionsResolver implements OptionsResolverInterface
+trait EnforcesRequiredOptionsTrait
 {
     use HandlesOptionsTrait;
 
