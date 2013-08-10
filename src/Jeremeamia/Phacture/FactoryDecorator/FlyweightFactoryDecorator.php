@@ -2,13 +2,11 @@
 
 namespace Jeremeamia\Phacture\FactoryDecorator;
 
+use Jeremeamia\Phacture\Factory\FactoryInterface;
 use Jeremeamia\Phacture\HandlesOptionsTrait;
-use Jeremeamia\Phacture\OptionsHelper;
 
 class FlyweightFactoryDecorator extends AbstractFactoryDecorator
 {
-    use HandlesOptionsTrait;
-
     const OPTION_USE_NEW = 'use_new';
 
     /**
@@ -17,11 +15,22 @@ class FlyweightFactoryDecorator extends AbstractFactoryDecorator
     protected $itemCache = [];
 
     /**
+     * @var callable
+     */
+    protected $keyCalculator;
+
+    public function __construct(FactoryInterface $factory, callable $keyCalculator = null)
+    {
+        $this->innerFactory = $factory;
+        $this->keyCalculator = $keyCalculator;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function create($identifier, $options = [])
     {
-        $options = $this->convertOptionsToArray($options);
+        $options = $this->prepareOptions($options);
         $key = $this->calculateKey($identifier, $options);
 
         if (isset($options[self::OPTION_USE_NEW]) && $options[self::OPTION_USE_NEW]) {
@@ -47,6 +56,13 @@ class FlyweightFactoryDecorator extends AbstractFactoryDecorator
         return $this;
     }
 
+    public function setKeyCalculator(callable $keyCalculator)
+    {
+        $this->keyCalculator = $keyCalculator;
+
+        return $this;
+    }
+
     /**
      * Determines the key used to cache the objects. This should be overridden if more complex logic is required
      *
@@ -57,6 +73,8 @@ class FlyweightFactoryDecorator extends AbstractFactoryDecorator
      */
     protected function calculateKey($identifier, array $options)
     {
-        return $identifier;
+        $calculate = $this->keyCalculator;
+
+        return $calculate ? $calculate($identifier, $options) : $identifier;
     }
 }

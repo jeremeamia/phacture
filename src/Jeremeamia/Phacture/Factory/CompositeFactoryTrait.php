@@ -2,6 +2,7 @@
 
 namespace Jeremeamia\Phacture\Factory;
 
+use Jeremeamia\Phacture\FactoryException;
 use Jeremeamia\Phacture\PrioritizedRecursiveArrayIterator;
 
 trait CompositeFactoryTrait
@@ -20,7 +21,7 @@ trait CompositeFactoryTrait
 
     /**
      * @param FactoryInterface $factory
-     * @param int                   $priority
+     * @param int              $priority
      *
      * @return self
      */
@@ -45,7 +46,7 @@ trait CompositeFactoryTrait
             }
         }
 
-        throw (new FactoryException)->setIdentifier($identifier)->setOptions($options);
+        throw (new FactoryException)->setContext($identifier, $options);
     }
 
     public function canCreate($identifier)
@@ -74,8 +75,8 @@ trait CompositeFactoryTrait
     public function __call($method, $args)
     {
         foreach ($this->getIterator() as $factory) {
-            $callable = array($factory, $method);
             try {
+                $callable = [$factory, $method];
                 if (is_callable($callable)) {
                     return call_user_func_array($callable, $args);
                 }

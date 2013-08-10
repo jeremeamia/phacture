@@ -2,12 +2,24 @@
 
 namespace Jeremeamia\Phacture\FactoryDecorator;
 
+use Jeremeamia\Phacture\Factory\FactoryInterface;
+
 class InitializerFactoryDecorator extends AbstractFactoryDecorator
 {
     /**
      * @var array
      */
     protected $initializers = [];
+
+    public function __construct(FactoryInterface $factory, $initializers = [])
+    {
+        $this->innerFactory = $factory;
+
+        $initializers = (array) $initializers;
+        foreach ($initializers as $initializer) {
+            $this->addInitializer($initializer);
+        }
+    }
 
     /**
      * @param callable $initializer
@@ -23,7 +35,7 @@ class InitializerFactoryDecorator extends AbstractFactoryDecorator
 
     public function create($identifier, $options = [])
     {
-        $options = $this->convertOptionsToArray($options);
+        $options = $this->prepareOptions($options);
         $instance = $this->innerFactory->create($identifier, $options);
 
         /** @var callable $initializer */

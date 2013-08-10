@@ -2,6 +2,8 @@
 
 namespace Jeremeamia\Phacture\Factory;
 
+use Jeremeamia\Phacture\FactoryException;
+
 trait FactoryMapFactoryTrait
 {
     use FactoryTrait;
@@ -24,26 +26,13 @@ trait FactoryMapFactoryTrait
         return $this;
     }
 
-    /**
-     * @param string $identifier
-     *
-     * @return self
-     */
-    public function removeFactory($identifier)
-    {
-        unset($this->factories[$identifier]);
-
-        return $this;
-    }
-
     public function create($identifier, $options = [])
     {
-        $options = $this->convertOptionsToArray($options);
+        $options = $this->prepareOptions($options);
 
         if (!isset($this->factories[$identifier])) {
             throw (new FactoryException("The factory class for {$identifier} was not found."))
-                ->setIdentifier($identifier)
-                ->setOptions($options);
+                ->setContext($identifier, $options);
         }
 
         $factoryFqcn = $this->factories[$identifier];
@@ -54,16 +43,14 @@ trait FactoryMapFactoryTrait
             $factory = new $factoryFqcn;
         } else {
             throw (new FactoryException("The factory class {$factoryFqcn} does not exist."))
-                ->setIdentifier($identifier)
-                ->setOptions($options);
+                ->setContext($identifier, $options);
         }
 
         if ($factory instanceof OptionsFactoryInterface) {
             return $factory->create($options);
         } else {
             throw (new FactoryException("The factory class {$factoryFqcn} must implement OptionsFactoryInterface."))
-                ->setIdentifier($identifier)
-                ->setOptions($options);
+                ->setContext($identifier, $options);
         }
     }
 

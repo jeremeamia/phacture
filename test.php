@@ -13,18 +13,17 @@ namespace {
     }}
     class SpecificClassFactory implements Jeremeamia\Phacture\Factory\OptionsFactoryInterface
     {
+        use Jeremeamia\Phacture\EnforcesRequiredOptionsTrait;
         public function create($options = []) {
             $fqcn = $this->determineFcqn($options);
-            if (!$fqcn) throw new Jeremeamia\Phacture\Factory\FactoryException('Could not do it!');
+            if (!$fqcn) throw new \Jeremeamia\Phacture\FactoryException('Could not do it!');
             return new $fqcn;
         }
         public function canCreate($options = []) {
             return (bool) $this->determineFcqn($options);
         }
         protected function determineFcqn(array $options) {
-            $options = (new Jeremeamia\Phacture\Resolver\RequiredOptionsResolver)
-                ->setRequiredKeys(array('vendor', 'package', 'class'))
-                ->resolveOptions($options);
+            $options = $this->setRequiredKeys(['vendor', 'package', 'class'])->resolveOptions($options);
             $fqcn = implode('\\', $options);
             return class_exists($fqcn) ? $fqcn : null;
         }
@@ -63,7 +62,7 @@ namespace {
     $namespaceFactory = (new AliasFactoryDecorator($namespaceFactory))
         ->addAlias('fizz_buzz', 'FizzBuzz');
     $classMapFactory = (new ClassMapFactory)
-        ->addClass('fooBarLib', 'Old_Foo_Bar_Lib');
+        ->addClass('fooBarLib', 'Old_Foo_Bar_Lib', new Old_Foo_Bar_Lib_Factory);
     $callbackFactory = (new CallbackFactory)
         ->addCallback('fooBarObj', function () {
             $object = new stdClass;
@@ -83,9 +82,10 @@ namespace {
 
     // Test the flyweight
     $obj1 = $flyweightFactory->create('fooBarLib', ['message' => 'HELLO_FROM_FACTORY']);
-    $obj2 = $flyweightFactory->create('fooBarLib', ['message' => 'HELLO_FROM_FACTORY']);
+    $obj2 = $flyweightFactory->create('fooBarLib');
     assert('$obj1 instanceof Old_Foo_Bar_Lib');
     assert('$obj1 === $obj2');
+    assert('$obj1->message = \'HELLO_FROM_FACTORY\'');
 
     // Test composite behavior and each of the factory types
     $objFoo = $compositeFactory->create('foo');

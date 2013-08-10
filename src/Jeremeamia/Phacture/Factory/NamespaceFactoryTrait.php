@@ -47,33 +47,18 @@ trait NamespaceFactoryTrait
         return $this;
     }
 
-    /**
-     * @param string $namespace
-     *
-     * @return self
-     */
-    public function removeNamespace($namespace)
-    {
-        $namespace = trim($namespace, '\\');
-        foreach ($this->namespaces as $priority => $namespaces) {
-            if ($index = array_search($namespace, $namespaces)) {
-                unset($this->namespaces[$priority][$index]);
-                $this->iterator = null;
-                break;
-            }
-        }
-
-        return $this;
-    }
-
     public function setPrefix($prefix)
     {
         $this->prefix = $prefix;
+
+        return $this;
     }
 
     public function setSuffix($suffix)
     {
         $this->suffix = $suffix;
+
+        return $this;
     }
 
     public function getIterator()

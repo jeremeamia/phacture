@@ -2,12 +2,22 @@
 
 namespace Jeremeamia\Phacture\FactoryDecorator;
 
+use Jeremeamia\Phacture\Factory\FactoryInterface;
+
 class AliasFactoryDecorator extends AbstractFactoryDecorator
 {
     /**
      * @var array
      */
     protected $aliases = [];
+
+    public function __construct(FactoryInterface $factory, array $aliases = [])
+    {
+        $this->innerFactory = $factory;
+        foreach ($aliases as $key => $value) {
+            $this->addAlias($key, $value);
+        }
+    }
 
     /**
      * @param string $alias

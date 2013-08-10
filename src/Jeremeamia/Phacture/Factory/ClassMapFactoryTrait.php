@@ -29,28 +29,20 @@ trait ClassMapFactoryTrait
         return $this;
     }
 
-    /**
-     * @param string $identifier
-     *
-     * @return self
-     */
-    public function removeClass($identifier)
-    {
-        unset($this->classes[$identifier]);
-
-        return $this;
-    }
-
     public function setDefaultClass($fqcn)
     {
-        $this->defaultClass = $fqcn;
+        if (class_exists($this->defaultClass)) {
+            $this->defaultClass = $fqcn;
+        } else {
+            throw new \InvalidArgumentException('{$fqcn} does not exist and cannot be assigned as default class.');
+        }
     }
 
     public function resolveFqcn($identifier)
     {
-        if (is_string($identifier) && isset($this->classes[$identifier]) && class_exists($this->classes[$identifier])) {
+        if (isset($this->classes[$identifier]) && class_exists($this->classes[$identifier])) {
             return $this->classes[$identifier];
-        } elseif ($this->defaultClass && class_exists($this->defaultClass)) {
+        } elseif ($this->defaultClass) {
             return $this->defaultClass;
         }
 

@@ -1,6 +1,7 @@
 <?php
 
 namespace Jeremeamia\Phacture\Factory;
+use Jeremeamia\Phacture\FactoryException;
 
 /**
  * Generic interface for factory classes.

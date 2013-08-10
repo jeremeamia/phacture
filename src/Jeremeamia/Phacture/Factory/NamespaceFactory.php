@@ -6,8 +6,9 @@ class NamespaceFactory implements FactoryInterface, \IteratorAggregate
 {
     use NamespaceFactoryTrait;
 
-    public function __construct(array $namespaces = [])
+    public function __construct($namespaces = [])
     {
+        $namespaces = (array) $namespaces;
         foreach ($namespaces as $namespace) {
             $this->addNamespace($namespace);
         }

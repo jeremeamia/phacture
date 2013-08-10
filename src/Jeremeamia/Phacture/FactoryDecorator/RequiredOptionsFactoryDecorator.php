@@ -2,11 +2,13 @@
 
 namespace Jeremeamia\Phacture\FactoryDecorator;
 
-use Jeremeamia\Phacture\Resolver\EnforcesRequiredOptionsTrait;
+use Jeremeamia\Phacture\AppliesDefaultOptionsTrait;
+use Jeremeamia\Phacture\EnforcesRequiredOptionsTrait;
 use Jeremeamia\Phacture\Factory\FactoryInterface;
 
 class RequiredOptionsFactoryDecorator extends AbstractFactoryDecorator
 {
+    use AppliesDefaultOptionsTrait;
     use EnforcesRequiredOptionsTrait;
 
     /**
@@ -23,6 +25,8 @@ class RequiredOptionsFactoryDecorator extends AbstractFactoryDecorator
 
     public function create($identifier, $options = [])
     {
-        return $this->innerFactory->create($identifier, $this->resolveOptions($options));
+        $options = $this->enforceRequiredOptions($this->applyDefaultOptions($options));
+
+        return $this->innerFactory->create($identifier, $options);
     }
 }

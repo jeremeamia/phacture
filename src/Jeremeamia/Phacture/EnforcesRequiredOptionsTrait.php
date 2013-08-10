@@ -1,17 +1,10 @@
 <?php
 
-namespace Jeremeamia\Phacture\Resolver;
-
-use Jeremeamia\Phacture\HandlesOptionsTrait;
+namespace Jeremeamia\Phacture;
 
 trait EnforcesRequiredOptionsTrait
 {
     use HandlesOptionsTrait;
-
-    /**
-     * @var array
-     */
-    protected $defaultOptions = [];
 
     /**
      * @var array
@@ -33,28 +26,18 @@ trait EnforcesRequiredOptionsTrait
     /**
      * @param mixed $options
      *
-     * @return self
-     */
-    public function setDefaultOptions($options)
-    {
-        $this->defaultOptions = $this->convertOptionsToArray($options);
-
-        return $this;
-    }
-
-    /**
-     * @param mixed $options
-     *
      * @return array
-     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
-    public function resolveOptions($options)
+    public function enforceRequiredOptions($options)
     {
-        $options = array_replace($this->defaultOptions, $this->convertOptionsToArray($options));
+        $options = $this->prepareOptions($options);
 
         if (array_diff($this->requiredKeys, array_keys($options))) {
-            $keys = implode(', ', $this->requiredKeys);
-            throw new \InvalidArgumentException("You must provide all of the following keys: {$keys}.");
+            $requiredKeys = $this->requiredKeys;
+            $lastKey = array_pop($requiredKeys);
+            $keys = implode(', ', $requiredKeys) . ', and ' . $lastKey;
+            throw new \RuntimeException("All of the following options are required: {$keys}.");
         }
 
         return $options;

@@ -2,6 +2,8 @@
 
 namespace Jeremeamia\Phacture\Factory;
 
+use Jeremeamia\Phacture\FactoryException;
+
 trait CallbackFactoryTrait
 {
     use FactoryTrait;
@@ -24,26 +26,14 @@ trait CallbackFactoryTrait
         return $this;
     }
 
-    /**
-     * @param string $identifier
-     *
-     * @return self
-     */
-    public function removeCallback($identifier)
-    {
-        unset($this->callbacks[$identifier]);
-
-        return $this;
-    }
-
     public function create($identifier, $options = [])
     {
-        $options = $this->convertOptionsToArray($options);
+        $options = $this->prepareOptions($options);
 
         if (isset($this->callbacks[$identifier])) {
-            return $this->callbacks[$identifier]($options);
+            return $this->callbacks[$identifier]($identifier, $options);
         } else {
-            throw (new FactoryException)->setIdentifier($identifier)->setOptions($options);
+            throw (new FactoryException)->setContext($identifier, $options);
         }
     }
 

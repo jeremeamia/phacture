@@ -12,7 +12,7 @@ trait HandlesOptionsTrait
      * @throws \InvalidArgumentException If the provided value cannot be made into an array
      * @return array
      */
-    private function convertOptionsToArray($options)
+    protected function prepareOptions($options)
     {
         if (is_array($options)) {
             return $options;
@@ -23,7 +23,7 @@ trait HandlesOptionsTrait
         } elseif (is_object($options)) {
             return get_object_vars($options);
         } elseif (is_string($options)) {
-            return array($options => true);
+            return [$options => true];
         } else {
             throw new \InvalidArgumentException('The provided value could not be coerced into an options array.');
         }

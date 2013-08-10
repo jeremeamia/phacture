@@ -2,11 +2,10 @@
 
 namespace Jeremeamia\Phacture\Factory;
 
-use Jeremeamia\Phacture\Instantiator\InstantiatorInterface;
-use Jeremeamia\Phacture\Resolver\FqcnResolverInterface;
+use Jeremeamia\Phacture\FactoryException;
 
 /**
- * Trait for factories that must determine the FQCN from the provided name
+ * Trait for factories that must determine the FQCN from the provided identifier
  */
 trait ClassFactoryTrait
 {
@@ -14,13 +13,13 @@ trait ClassFactoryTrait
 
     public function create($identifier, $options = [])
     {
-        $options = $this->convertOptionsToArray($options);
+        $options = $this->prepareOptions($options);
         $fqcn = $this->resolveFqcn($identifier);
 
         try {
             return $this->instantiateClass($fqcn, $options);
         } catch (FactoryException $e) {
-            throw $e->setIdentifier($identifier)->setFqcn($fqcn)->setOptions($options);
+            throw $e->setContext($identifier, $options);
         }
     }
 
@@ -37,30 +36,11 @@ trait ClassFactoryTrait
      */
     protected function instantiateClass($fqcn, array $options)
     {
-        $factoryMethod = array($fqcn, 'factory');
+        $factoryMethod = [$fqcn, 'factory'];
         if (is_callable($factoryMethod)) {
             return $factoryMethod($options);
         } else {
-            return $this->instantiateClassWithConstructor($fqcn, $options);
-        }
-    }
-
-    protected function instantiateClassWithConstructor($fqcn, array $args)
-    {
-        $count = count($args);
-
-        if ($count === 0) {
             return new $fqcn;
-        } elseif ($count === 1) {
-            return new $fqcn($args[0]);
-        } elseif ($count === 2) {
-            return new $fqcn($args[0], $args[1]);
-        } elseif ($count === 3) {
-            return new $fqcn($args[0], $args[1], $args[2]);
-        } else {
-            $class = new \ReflectionClass($fqcn);
-
-            return $class->newInstanceArgs($args);
         }
     }
 

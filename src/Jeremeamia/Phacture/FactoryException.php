@@ -1,6 +1,6 @@
 <?php
 
-namespace Jeremeamia\Phacture\Factory;
+namespace Jeremeamia\Phacture;
 
 /**
  * An exception thrown when an object creation fails
@@ -17,15 +17,16 @@ class FactoryException extends \RuntimeException
      */
     private $options;
 
-    public function setIdentifier($identifier)
+    public function setContext($identifier, $options)
     {
         if (!$this->identifier) {
-            $message = 'Could not instantiate an object using the provided identifier';
+            $message = 'Could not create an object using the provided identifier';
             $message .= is_string($identifier) ? " \"{$identifier}\"." : '.';
             $this->message = $message . ($this->message ? ' ' . $this->message : '');
         }
 
         $this->identifier = $identifier;
+        $this->options = $options;
 
         return $this;
     }
@@ -33,13 +34,6 @@ class FactoryException extends \RuntimeException
     public function getIdentifier()
     {
         return $this->identifier;
-    }
-
-    public function setOptions($options)
-    {
-        $this->options = $options;
-
-        return $this;
     }
 
     public function getOptions()
