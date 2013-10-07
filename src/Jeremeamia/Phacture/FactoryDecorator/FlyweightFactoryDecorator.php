@@ -64,14 +64,14 @@ class FlyweightFactoryDecorator extends AbstractFactoryDecorator
     }
 
     /**
-     * Determines the key used to cache the objects. This should be overridden if more complex logic is required
+     * Determines the key used to cache the objects.
      *
      * @param string $identifier
      * @param array  $options
      *
      * @return string
      */
-    protected function calculateKey($identifier, array $options)
+    private function calculateKey($identifier, array $options)
     {
         $calculate = $this->keyCalculator;
 
