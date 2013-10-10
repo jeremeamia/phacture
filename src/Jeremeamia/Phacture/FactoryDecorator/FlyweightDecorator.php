@@ -2,35 +2,35 @@
 
 namespace Jeremeamia\Phacture\FactoryDecorator;
 
-use Jeremeamia\Phacture\Factory\FactoryInterface;
-use Jeremeamia\Phacture\HandlesOptionsTrait;
+use Jeremeamia\Phacture\Factory\ClassFactory;
+use Jeremeamia\Phacture\FactoryInterface;
 
-class FlyweightFactoryDecorator extends AbstractFactoryDecorator
+class FlyweightDecorator extends BaseDecorator
 {
     const OPTION_USE_NEW = 'use_new';
 
     /**
      * @var array
      */
-    protected $itemCache = [];
+    protected $itemCache = array();
 
     /**
-     * @var callable
+     * @var \Closure
      */
     protected $keyCalculator;
 
-    public function __construct(FactoryInterface $factory, callable $keyCalculator = null)
+    /**
+     * @param FactoryInterface $innerFactory
+     * @param callable         $keyCalculator
+     */
+    public function __construct(FactoryInterface $innerFactory = null, \Closure $keyCalculator = null)
     {
-        $this->innerFactory = $factory;
+        $this->innerFactory = $innerFactory ?: new ClassFactory;
         $this->keyCalculator = $keyCalculator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function create($identifier, $options = [])
+    public function doCreate($identifier, array $options)
     {
-        $options = $this->prepareOptions($options);
         $key = $this->calculateKey($identifier, $options);
 
         if (isset($options[self::OPTION_USE_NEW]) && $options[self::OPTION_USE_NEW]) {
@@ -51,12 +51,17 @@ class FlyweightFactoryDecorator extends AbstractFactoryDecorator
      */
     public function clearCache()
     {
-        $this->itemCache = [];
+        $this->itemCache = array();
 
         return $this;
     }
 
-    public function setKeyCalculator(callable $keyCalculator)
+    /**
+     * @param callable $keyCalculator
+     *
+     * @return $this
+     */
+    public function setKeyCalculator(\Closure $keyCalculator)
     {
         $this->keyCalculator = $keyCalculator;
 
@@ -71,10 +76,8 @@ class FlyweightFactoryDecorator extends AbstractFactoryDecorator
      *
      * @return string
      */
-    private function calculateKey($identifier, array $options)
+    protected function calculateKey($identifier, array $options)
     {
-        $calculate = $this->keyCalculator;
-
-        return $calculate ? $calculate($identifier, $options) : $identifier;
+        return $this->keyCalculator ? call_user_func($this->keyCalculator, $identifier, $options) : $identifier;
     }
 }

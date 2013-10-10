@@ -1,6 +1,21 @@
 {
     "name": "jeremeamia/phacture",
+    "description": "Building PHP objects since 2013.",
     "type": "library",
+    "license": "MIT",
+    "keywords": ["factory", "pattern", "closure"],
+    "authors": [
+        {
+            "name": "Jeremy Lindblom",
+            "email": "jeremeamia@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3"
+    },
+    "require-dev": {
+        "php": ">=5.3.7"
+    },
     "autoload": {
         "psr-0": {
             "Jeremeamia\\Phacture": "src/"

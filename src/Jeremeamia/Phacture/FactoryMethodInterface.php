@@ -8,9 +8,9 @@ namespace Jeremeamia\Phacture;
 interface FactoryMethodInterface
 {
     /**
-     * @param mixed $options
+     * @param array $options
      *
      * @return static
      */
-    public static function factory($options = []);
+    public static function factory(array $options = array());
 }

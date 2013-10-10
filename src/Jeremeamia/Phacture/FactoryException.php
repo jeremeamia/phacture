@@ -17,18 +17,22 @@ class FactoryException extends \RuntimeException
      */
     private $options;
 
-    public function setContext($identifier, $options)
+    /**
+     * @var string
+     */
+    private $factoryFqcn;
+
+    public static function withContext($identifier, $options, $factoryFqcn)
     {
-        if (!$this->identifier) {
-            $message = 'Could not create an object using the provided identifier';
-            $message .= is_string($identifier) ? " \"{$identifier}\"." : '.';
-            $this->message = $message . ($this->message ? ' ' . $this->message : '');
-        }
+        $class = substr($factoryFqcn, strrpos($factoryFqcn, '\\') + 1);
+        $message = "The {$class} could not create an object using the provided identifier: \"{$identifier}\".";
+        $exception = new self($message);
 
-        $this->identifier = $identifier;
-        $this->options = $options;
+        $exception->identifier = $identifier;
+        $exception->options = $options;
+        $exception->factoryFqcn = $factoryFqcn;
 
-        return $this;
+        return $exception;
     }
 
     public function getIdentifier()
@@ -39,5 +43,10 @@ class FactoryException extends \RuntimeException
     public function getOptions()
     {
         return $this->options;
+    }
+
+    public function getFactoryFqcn()
+    {
+        return $this->factoryFqcn;
     }
 }

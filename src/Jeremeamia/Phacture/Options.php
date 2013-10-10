@@ -2,17 +2,17 @@
 
 namespace Jeremeamia\Phacture;
 
-trait HandlesOptionsTrait
+class Options
 {
     /**
      * Converts the provided options argument into an array form
      *
      * @param mixed $options The provided options
      *
-     * @throws \InvalidArgumentException If the provided value cannot be made into an array
      * @return array
+     * @throws \InvalidArgumentException If the provided value cannot be made into an array
      */
-    protected function prepareOptions($options)
+    public static function arrayify($options = array())
     {
         if (is_array($options)) {
             return $options;
@@ -23,9 +23,9 @@ trait HandlesOptionsTrait
         } elseif (is_object($options)) {
             return get_object_vars($options);
         } elseif (is_string($options)) {
-            return [$options => true];
+            return array($options => true);
         } else {
-            throw new \InvalidArgumentException('The provided value could not be coerced into an options array.');
+            throw new \InvalidArgumentException('The provided value could not be coerced into an associative array.');
         }
     }
 }
