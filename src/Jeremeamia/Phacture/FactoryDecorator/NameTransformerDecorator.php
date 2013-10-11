@@ -5,7 +5,7 @@ namespace Jeremeamia\Phacture\FactoryDecorator;
 use Jeremeamia\Phacture\Factory\ClassFactory;
 use Jeremeamia\Phacture\FactoryInterface;
 
-class IdentifierTransformerDecorator extends BaseDecorator
+class NameTransformerDecorator extends BaseDecorator
 {
     /**
      * @var callable
@@ -23,17 +23,17 @@ class IdentifierTransformerDecorator extends BaseDecorator
         }
     }
 
-    public function doCreate($identifier, array $options)
+    public function doCreate($name, array $options)
     {
         // Use closure syntax when possible in order to allow for pass-by-reference. This is useful when you want to
-        // modify the options at the same time as the identifier (e.g., to preserve the original identifier value)
+        // modify the options at the same time as the name (e.g., to preserve the original name value)
         $callback = $this->callback;
         if ($callback instanceof \Closure) {
-            $identifier = $callback($identifier, $options);
+            $name = $callback($name, $options);
         } else {
-            $identifier = call_user_func($callback, $identifier, $options);
+            $name = call_user_func($callback, $name, $options);
         }
 
-        return $this->innerFactory->create($identifier, $options);
+        return $this->innerFactory->create($name, $options);
     }
 }

@@ -10,7 +10,7 @@ class FactoryException extends \RuntimeException
     /**
      * @var string
      */
-    private $identifier;
+    private $name;
 
     /**
      * @var mixed
@@ -22,22 +22,22 @@ class FactoryException extends \RuntimeException
      */
     private $factoryFqcn;
 
-    public static function withContext($identifier, $options, $factoryFqcn)
+    public static function withContext($name, $options, $factoryFqcn)
     {
         $class = substr($factoryFqcn, strrpos($factoryFqcn, '\\') + 1);
-        $message = "The {$class} could not create an object using the provided identifier: \"{$identifier}\".";
+        $message = "The {$class} could not create an object using the provided name: \"{$name}\".";
         $exception = new self($message);
 
-        $exception->identifier = $identifier;
+        $exception->name = $name;
         $exception->options = $options;
         $exception->factoryFqcn = $factoryFqcn;
 
         return $exception;
     }
 
-    public function getIdentifier()
+    public function getName()
     {
-        return $this->identifier;
+        return $this->name;
     }
 
     public function getOptions()

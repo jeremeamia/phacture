@@ -25,7 +25,7 @@ class NamespaceFactory extends BaseDecorator
     /**
      * @var array
      */
-    protected $resolvedIdentifiers = array();
+    protected $resolvedNames = array();
 
     /**
      * @param array            $namespaces
@@ -49,7 +49,7 @@ class NamespaceFactory extends BaseDecorator
     public function setPrefix($prefix)
     {
         $this->prefix = (string) $prefix;
-        $this->resolvedIdentifiers = array();
+        $this->resolvedNames = array();
 
         return $this;
     }
@@ -62,7 +62,7 @@ class NamespaceFactory extends BaseDecorator
     public function setSuffix($suffix)
     {
         $this->suffix = (string) $suffix;
-        $this->resolvedIdentifiers = array();
+        $this->resolvedNames = array();
 
         return $this;
     }
@@ -80,37 +80,37 @@ class NamespaceFactory extends BaseDecorator
         }
 
         $this->namespaces[$priority][] = trim($namespace, '\\');
-        $this->resolvedIdentifiers = array();
+        $this->resolvedNames = array();
 
         return $this;
     }
 
-    public function canCreate($identifier)
+    public function canCreate($name)
     {
-        if (!isset($this->resolvedIdentifiers[$identifier])) {
+        if (!isset($this->resolvedNames[$name])) {
             // Sort the namespaces to be in proper priority order
             krsort($this->namespaces);
 
-            // Default resolved identifier to a not-found state
-            $this->resolvedIdentifiers[$identifier] = false;
+            // Default resolved name to a not-found state
+            $this->resolvedNames[$name] = false;
 
             // Iterate through the namespaces and look for one containing the class name
             foreach ($this->namespaces as $namespaces) {
                 foreach ($namespaces as $namespace) {
-                    $fqcn = "{$namespace}\\{$this->prefix}{$identifier}{$this->suffix}";
+                    $fqcn = "{$namespace}\\{$this->prefix}{$name}{$this->suffix}";
                     if (class_exists($fqcn)) {
-                        $this->resolvedIdentifiers[$identifier] = $fqcn;
+                        $this->resolvedNames[$name] = $fqcn;
                         break(2);
                     }
                 }
             }
         }
 
-        return (bool) $this->resolvedIdentifiers[$identifier];
+        return (bool) $this->resolvedNames[$name];
     }
 
-    protected function doCreate($identifier, array $options)
+    protected function doCreate($name, array $options)
     {
-        return $this->innerFactory->create($this->resolvedIdentifiers[$identifier], $options);
+        return $this->innerFactory->create($this->resolvedNames[$name], $options);
     }
 }

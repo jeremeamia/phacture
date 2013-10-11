@@ -2,32 +2,45 @@
 
 namespace Jeremeamia\Phacture\Factory;
 
-use Jeremeamia\Phacture\FactoryInterface;
+use Jeremeamia\Phacture\OptionsOnlyFactoryInterface;
 
 /**
  *
  */
 class ClassFactory extends BaseFactory
 {
-    public function __construct($factoryMethod = 'factory')
+    protected $factoryMethod;
+
+    protected $executeFactories;
+
+    public function __construct($factoryMethod = 'factory', $executeFactories = true)
     {
         $this->factoryMethod = $factoryMethod;
+        $this->executeFactories = (bool) $executeFactories;
     }
 
-    public function canCreate($identifier)
+    public function canCreate($name)
     {
-        return class_exists($identifier);
+        return class_exists($name);
     }
 
-    protected function doCreate($identifier, array $options)
+    protected function doCreate($name, array $options)
     {
-        // We will treat the identifier as if it is a fully qualified class name (FQCN)
-        $fqcn = $identifier;
+        // We will treat the name as if it is a fully qualified class name (FQCN)
+        $fqcn = $name;
 
-        if (method_exists($fqcn, $this->factoryMethod)) {
-            return call_user_func(array($fqcn, $this->factoryMethod), $options);
+        // Retrieve an instance of the object
+        if ($this->factoryMethod && method_exists($fqcn, $this->factoryMethod)) {
+            $object = call_user_func("{$fqcn}::{$this->factoryMethod}", $options);
         } else {
-            return new $fqcn;
+            $object = new $fqcn;
         }
+
+        // If the object is a factory, execute it
+        if ($this->executeFactories && $object instanceof OptionsOnlyFactoryInterface) {
+            $object = $object->create($options);
+        }
+
+        return $object;
     }
 }

@@ -39,9 +39,9 @@ class InitializerDecorator extends BaseDecorator
         return $this;
     }
 
-    public function doCreate($identifier, array $options)
+    public function doCreate($name, array $options)
     {
-        $instance = $this->innerFactory->create($identifier, $options);
+        $instance = $this->innerFactory->create($name, $options);
 
         foreach ($this->initializers as $initializer) {
             $instance = call_user_func($initializer, $instance, $options);

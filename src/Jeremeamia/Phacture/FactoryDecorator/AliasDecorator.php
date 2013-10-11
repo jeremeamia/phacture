@@ -12,6 +12,10 @@ class AliasDecorator extends BaseDecorator
      */
     protected $aliases = array();
 
+    /**
+     * @param FactoryInterface $innerFactory
+     * @param array            $aliases
+     */
     public function __construct(FactoryInterface $innerFactory = null, array $aliases = array())
     {
         $this->innerFactory = $innerFactory ?: new ClassFactory;
@@ -23,24 +27,23 @@ class AliasDecorator extends BaseDecorator
 
     /**
      * @param string $alias
-     * @param string $identifier
+     * @param string $name
      *
      * @return $this
      */
-    public function addAlias($alias, $identifier)
+    public function addAlias($alias, $name)
     {
-        $this->aliases[$alias] = $identifier;
+        $this->aliases[$alias] = $name;
 
         return $this;
     }
 
-    public function doCreate($identifier, array $options)
+    public function doCreate($name, array $options)
     {
-        return $this->innerFactory->create($this->aliases[$identifier], $options);
-    }
+        if (isset($this->aliases[$name])) {
+            $name = $this->aliases[$name];
+        }
 
-    public function canCreate($identifier)
-    {
-        return isset($this->aliases[$identifier]);
+        return $this->innerFactory->create($name, $options);
     }
 }

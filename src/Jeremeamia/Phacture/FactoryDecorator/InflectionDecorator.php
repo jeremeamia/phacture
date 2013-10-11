@@ -32,9 +32,9 @@ class InflectionDecorator extends BaseDecorator
         }
     }
 
-    public function doCreate($identifier, array $options)
+    public function doCreate($name, array $options)
     {
-        return $this->innerFactory->create($this->inflect($identifier), $options);
+        return $this->innerFactory->create($this->inflect($name), $options);
     }
 
     protected function inflect($word)

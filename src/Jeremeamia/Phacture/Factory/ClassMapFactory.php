@@ -13,92 +13,58 @@ class ClassMapFactory extends BaseDecorator
     protected $classMap = array();
 
     /**
-     * @var \Closure
+     * @var string
      */
-    protected $mapFunction;
-
-    /**
-     * @var array
-     */
-    protected $resolvedIdentifiers = array();
+    protected $defaultClass;
 
     /**
      * @param array            $classes
      * @param FactoryInterface $innerFactory
      */
-    public function __construct($classes = array(), FactoryInterface $innerFactory = null)
+    public function __construct(array $classes = array(), FactoryInterface $innerFactory = null)
     {
         $this->innerFactory = $innerFactory ?: new ClassFactory;
 
-        if (is_array($classes)) {
-            foreach ($classes as $identifier => $fqcn) {
-                $this->addClass($identifier, $fqcn);
-            }
-        } elseif ($classes instanceof \Closure) {
-            $this->setMapFunction($classes);
-        } else {
-            throw new \InvalidArgumentException('The ClassMapFactory expects either a class map array or function.');
+        foreach ($classes as $name => $fqcn) {
+            $this->addClass($name, $fqcn);
         }
     }
 
     /**
-     * @param string $identifier
+     * @param string $name
      * @param string $fqcn
      *
      * @return self
      */
-    public function addClass($identifier, $fqcn)
+    public function addClass($name, $fqcn)
     {
-        $this->classMap[$identifier] = $fqcn;
-        $this->resolvedIdentifiers = array();
+        $this->classMap[$name] = $fqcn;
 
         return $this;
     }
 
     /**
-     * @param \Closure $mapFunction
+     * @param string $fqcn
      *
      * @return $this
      */
-    public function setMapFunction(\Closure $mapFunction)
+    public function setDefaultClass($fqcn)
     {
-        $this->mapFunction = $mapFunction;
-        $this->resolvedIdentifiers = array();
+        $this->defaultClass = $fqcn;
 
         return $this;
     }
 
-    public function doCreate($identifier, array $options)
+    public function doCreate($name, array $options)
     {
-        return $this->innerFactory->create($this->resolveFqcn($identifier), $options);
+        return $this->innerFactory->create($this->resolveFqcn($name), $options);
     }
 
-    public function canCreate($identifier)
+    public function canCreate($name)
     {
-        return (bool) $this->resolveFqcn($identifier);
-    }
+        $fqcn = isset($this->classMap[$name]) ? $this->classMap[$name] : $this->defaultClass;
 
-    protected function resolveFqcn($identifier)
-    {
-        if (!isset($this->resolvedIdentifiers[$identifier])) {
-            // Determine the FQCN
-            if (isset($this->classMap[$identifier])) {
-                $fqcn = $this->classMap[$identifier];
-            } elseif ($this->mapFunction) {
-                $fqcn = call_user_func($this->mapFunction, $identifier);
-            } else {
-                $fqcn = null;
-            }
-
-            // Determine if the FQCN exists
-            if ($fqcn && class_exists($fqcn)) {
-                $this->resolvedIdentifiers[$identifier] = $fqcn;
-            } else {
-                $this->resolvedIdentifiers[$identifier] = false;
-            }
-        }
-
-        return $this->resolvedIdentifiers[$identifier];
+        return isset($fqcn) && class_exists($fqcn);
     }
 }
 

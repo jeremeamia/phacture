@@ -23,8 +23,8 @@ class OptionsTransformerDecorator extends BaseDecorator
         }
     }
 
-    public function doCreate($identifier, array $options)
+    public function doCreate($name, array $options)
     {
-        return $this->innerFactory->create($identifier, call_user_func($this->callback, $identifier, $options));
+        return $this->innerFactory->create($name, call_user_func($this->callback, $name, $options));
     }
 }

@@ -10,25 +10,25 @@ use Jeremeamia\Phacture\FactoryInterface;
  */
 abstract class BaseFactory implements FactoryInterface
 {
-    public function create($identifier, array $options = [])
+    public function create($name, array $options = [])
     {
-        if ($this->canCreate($identifier)) {
-            return $this->doCreate($identifier, $options);
+        if ($this->canCreate($name)) {
+            return $this->doCreate($name, $options);
         } else {
-            throw FactoryException::withContext($identifier, $options, get_class($this));
+            throw FactoryException::withContext($name, $options, get_class($this));
         }
     }
 
-    public function canCreate($identifier)
+    public function canCreate($name)
     {
         return true;
     }
 
     /**
-     * @param string $identifier
+     * @param string $name
      * @param array  $options
      *
      * @return mixed
      */
-    abstract protected function doCreate($identifier, array $options);
+    abstract protected function doCreate($name, array $options);
 }

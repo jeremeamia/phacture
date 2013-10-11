@@ -21,16 +21,16 @@ class CallbackFactory extends BaseFactory
     }
 
     /**
-     * @param string   $identifier
+     * @param string   $name
      * @param callable $callback
      *
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function addCallback($identifier, $callback)
+    public function addCallback($name, $callback)
     {
         if (is_callable($callback)) {
-            $this->callbacks[$identifier] = $callback;
+            $this->callbacks[$name] = $callback;
         } else {
             throw new \InvalidArgumentException('The value provided was not a valid callback.');
         }
@@ -38,13 +38,13 @@ class CallbackFactory extends BaseFactory
         return $this;
     }
 
-    public function doCreate($identifier, array $options)
+    public function doCreate($name, array $options)
     {
-        return call_user_func($this->callbacks[$identifier], $identifier, $options);
+        return call_user_func($this->callbacks[$name], $name, $options);
     }
 
-    public function canCreate($identifier)
+    public function canCreate($name)
     {
-        return isset($this->callbacks[$identifier]);
+        return isset($this->callbacks[$name]);
     }
 }

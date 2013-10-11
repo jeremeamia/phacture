@@ -18,12 +18,12 @@ class BranchingDecorator extends BaseDecorator
         $this->alternateFactory = $alternateFactory;
     }
 
-    public function doCreate($identifier, array $options)
+    public function doCreate($name, array $options)
     {
         try {
-            return $this->innerFactory->create($identifier, $options);
+            return $this->innerFactory->create($name, $options);
         } catch (FactoryException $e) {
-            return $this->alternateFactory->create($identifier, $options);
+            return $this->alternateFactory->create($name, $options);
         }
     }
 }

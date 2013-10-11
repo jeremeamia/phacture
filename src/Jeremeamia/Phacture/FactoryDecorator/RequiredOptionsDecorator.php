@@ -55,7 +55,7 @@ class RequiredOptionsDecorator extends BaseDecorator
         return $this;
     }
 
-    public function doCreate($identifier, array $options)
+    public function doCreate($name, array $options)
     {
         $options = $options + $this->defaultOptions;
 
@@ -64,6 +64,6 @@ class RequiredOptionsDecorator extends BaseDecorator
             throw new \RuntimeException("All of the following options are required: {$keys}.");
         }
 
-        return $this->innerFactory->create($identifier, $options);
+        return $this->innerFactory->create($name, $options);
     }
 }

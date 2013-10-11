@@ -29,16 +29,16 @@ class FlyweightDecorator extends BaseDecorator
         $this->keyCalculator = $keyCalculator;
     }
 
-    public function doCreate($identifier, array $options)
+    public function doCreate($name, array $options)
     {
-        $key = $this->calculateKey($identifier, $options);
+        $key = $this->calculateKey($name, $options);
 
         if (isset($options[self::OPTION_USE_NEW]) && $options[self::OPTION_USE_NEW]) {
             unset($this->itemCache[$key], $options[self::OPTION_USE_NEW]);
         }
 
         if (!isset($this->itemCache[$key])) {
-            $this->itemCache[$key] = $this->innerFactory->create($identifier, $options);
+            $this->itemCache[$key] = $this->innerFactory->create($name, $options);
         }
 
         return $this->itemCache[$key];
@@ -71,13 +71,13 @@ class FlyweightDecorator extends BaseDecorator
     /**
      * Determines the key used to cache the objects.
      *
-     * @param string $identifier
+     * @param string $name
      * @param array  $options
      *
      * @return string
      */
-    protected function calculateKey($identifier, array $options)
+    protected function calculateKey($name, array $options)
     {
-        return $this->keyCalculator ? call_user_func($this->keyCalculator, $identifier, $options) : $identifier;
+        return $this->keyCalculator ? call_user_func($this->keyCalculator, $name, $options) : $name;
     }
 }
