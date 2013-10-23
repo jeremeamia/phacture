@@ -45,11 +45,6 @@ class ExposeInnerMethodDecorator extends BaseDecorator
         return $this;
     }
 
-    public function doCreate($name, array $options)
-    {
-        return $this->innerFactory->create($this->inflect($name), $options);
-    }
-
     public function __call($method, $args)
     {
         if (isset($this->innerMethods[$method])) {

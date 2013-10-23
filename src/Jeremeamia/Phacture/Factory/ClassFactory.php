@@ -9,8 +9,14 @@ use Jeremeamia\Phacture\OptionsOnlyFactoryInterface;
  */
 class ClassFactory extends BaseFactory
 {
+    /**
+     * @var string Factory method to use if it exists on the class
+     */
     protected $factoryMethod;
 
+    /**
+     * @var bool Option to execute a factory object if one is instantiated by this factory
+     */
     protected $executeFactories;
 
     public function __construct($factoryMethod = 'factory', $executeFactories = true)
