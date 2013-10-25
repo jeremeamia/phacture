@@ -48,4 +48,18 @@ abstract class BaseDecorator extends BaseFactory
     {
         return $this->innerFactory->create($name, $options);
     }
+
+    public function __call($method, $args)
+    {
+        $factory = $this;
+
+        do {
+            $factory = $factory->getInnerFactory();
+            if ($factory && method_exists($factory, $method)) {
+                return call_user_func_array(array($factory, $method), $args);
+            }
+        } while ($factory instanceof BaseDecorator);
+
+        throw new \BadMethodCallException("The method \"{$method}\" does not exist on this factory.");
+    }
 }

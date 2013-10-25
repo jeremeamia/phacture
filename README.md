@@ -1,81 +1,104 @@
 Phacture (PHP + Facture)
 ========================
 
-**fac·ture** *(noun) \ˈfak-chər\*
+> **fac·ture** *(noun) \ˈfak-chər\*
+>
+> 1. the act, process, or manner of making anything; construction.
+> 2. the manner in which something, especially a work of art, is made.
 
-1. the act, process, or manner of making anything; construction.
-2. the manner in which something, especially a work of art, is made.
+**Phacture** is a PHP library that helps you or your code's consumers to instantiate objects through the factory design
+pattern. Phacture has two parts:
 
-Phacture is a PHP library containing a common interface for factory objects and implementations for a few boilerplate
-factory scenarios.
+1. A common interface for factory objects.
+2. Implementations for a few boilerplate factory use cases.
 
-By Jeremy Lindblom
+Phacture was created by Jeremy Lindblom. This is version **0.1.0-preview**.
 
-Version: **0.1.0-preview**
+Examples
+--------
 
-Example
--------
+### 1. Config Reader Factory
 
-Given the following related classes that your application may need to instantiate:
+Let's say you have a set of objects responsible for reading configuration files in various formats (e.g.,
+`MyLib\Config\Reader\XmlConfigReader`, `MyLib\Config\Reader\JsonConfigReader`, and
+`MyLib\Config\Reader\YamlConfigReader`). Instead of writing and testing your own factory class code to instantiate these
+*ConfigReader* classes, you can use the factory classes provided by Phacture to compose a factory object with the
+behavior you need.
 
-```php
-namespace SomeVendor\SomeLib {
-    class ThingOne {}
-    class ThingTwo {}
-    class ThingThree {}
-}
+    use Jeremeamia\Phacture\Factory\ClassFactory;
+    use Jeremeamia\Phacture\FactoryDecorator\NameTransformerDecorator;
 
-namespace {
-    class AnotherVendor_OldSchoolLib_ThingFour {}
-}
+    $configReaderFactory = new NameTransformerDecorator(new ClassFactory, function ($name) {
+        return 'MyLib\\Config\\Reader\\' . ucfirst($name) . 'ConfigReader';
+    });
 
-namespace YetAnotherVendor\SomeOtherLib {
-    class ThingFive {}
-}
-```
+    $configReader = $configReaderFactory->create('xml');  #> MyLib\Config\Reader\XmlConfigReader
+    $configReader = $configReaderFactory->create('json'); #> MyLib\Config\Reader\JsonConfigReader
+    $configReader = $configReaderFactory->create('yaml'); #> MyLib\Config\Reader\YamlConfigReader
 
-You can use Phacture to compose a factory object that is capable of instantiating all of them.
+### 2. Database Adapter Factory
 
-```php
-// Create a fairly complex factory object using the Phacture FactoryBuilder
-$factory = (new \Jeremeamia\Phacture\FactoryBuilder)
-    ->addNamespace('SomeVendor\SomeLib')
-    ->addClass('ThingFour', 'AnotherVendor_OldSchoolLib_Four')
-    ->addCallback('ThingFive', function ($identifier) {
-        return new YetAnotherVendor\SomeOtherLib\Five;
-    })
-    ->addIdentifierInflection()
-    ->addFlyweightCaching()
-    ->build();
+You could do something similar if you had a set of database adapters.
 
-$one = $factory->create('thing_one');
-echo get_class($one);
-//> SomeVendor\SomeLib\One
+    use Jeremeamia\Phacture\Factory\NamespaceFactory;
+    use Jeremeamia\Phacture\FactoryDecorator\InflectionDecorator;
+    use Jeremeamia\Phacture\FactoryDecorator\RequiredOptionsDecorator;
 
-$two = $factory->create('thing_two');
-echo get_class($two);
-//> SomeVendor\SomeLib\Two
+    $dbFactory = new NamespaceFactory('MyLib\Db\Adapter');
+    $dbFactory->setSuffix('Adapter');
+    $dbFactory = new InflectionDecorator($dbFactory);
+    $dbFactory = new RequiredOptionsDecorator($dbFactory);
+    $dbFactory->setRequiredKey(array('db_host', 'db_user', 'db_pass', 'db_name'));
 
-$three = $factory->create('thing_three');
-echo get_class($three);
-//> SomeVendor\SomeLib\Three
+    $db = $dbFactory->create('mysql', array(
+        'db_host' => 'localhost',
+        'db_user' => 'admin',
+        'db_pass' => 'Ch@ng3M3!',
+        'db_name' => 'test',
+    ));
 
-$four = $factory->create('thing_four');
-echo get_class($four);
-//> AnotherVendor_OldSchoolLib_Four
+### 3. Database Adapter Pooling via `FlyweightDecorator`
 
-$five = $factory->create('thing_five');
-echo get_class($five);
-//> YetAnotherVendor\SomeOtherLib\Five
+The factory decorator system allows you to modify and add to the behavior of the factory. For example, we could add the
+`FlyweightDecorator` to the previous example to create a kind of database connection pooling.
 
-$oneAgain = $factory->create('thing_one');
-var_dump($one === $oneAgain);
-//> bool(true)
-```
+    use Jeremeamia\Phacture\FactoryDecorator\FlyweightDecorator;
+
+    $dbFactory = new FlyweightDecorator($dbFactory, function ($name, $options) {
+        return md5($name . implode('|', $options));
+    });
+
+    $db1 = $dbFactory->create('mysql', array(
+        'db_host' => 'localhost',
+        'db_user' => 'admin',
+        'db_pass' => 'Ch@ng3M3!',
+        'db_name' => 'test',
+    ));
+
+    $db2 = $dbFactory->create('mysql', array(
+        'db_host' => 'localhost',
+        'db_user' => 'admin',
+        'db_pass' => 'Ch@ng3M3!',
+        'db_name' => 'test',
+    ));
+
+    var_dump($db1 === $db2); #> bool(true)
+
+### Database Adapter Factory via `FactoryBuilder`
+
+Instead of using the Phacture factory and decorator classes directly to compose your factory's behavior, you can use
+the `FactoryBuilder`.
+
+    $dbFactory = \Jeremeamia\Phacture\FactoryBuilder::newInstance()
+        ->addNamespace('MyLib\Db\Adapter')
+        ->addNameTransformer(function ($name) { return "{$name}Adapter"; })
+        ->addNameInflection()
+        ->addRequiredOptions(array('db_host', 'db_user', 'db_pass', 'db_name'))
+        ->addFlyweightCaching()
+        ->build();
 
 TODO
 ----
 
-1. Gather and apply feedback
-2. Unit tests
-3. Documentation
+1. Gather feedback
+2. Write tests

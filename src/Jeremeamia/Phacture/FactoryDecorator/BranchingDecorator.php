@@ -34,4 +34,13 @@ class BranchingDecorator extends BaseDecorator
             return $this->alternateFactory->create($name, $options);
         }
     }
+
+    public function __call($method, $args)
+    {
+        try {
+            return parent::__call($method, $args);
+        } catch (\BadMethodCallException $e) {
+            return call_user_func_array(array($this->alternateFactory, $method), $args);
+        }
+    }
 }
