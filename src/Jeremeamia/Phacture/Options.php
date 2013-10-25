@@ -16,8 +16,6 @@ class Options
     {
         if (is_array($options)) {
             return $options;
-        } elseif ($options instanceof \ArrayObject) {
-            return $options->getArrayCopy();
         } elseif ($options instanceof \Traversable) {
             return iterator_to_array($options, true);
         } elseif (is_object($options)) {
