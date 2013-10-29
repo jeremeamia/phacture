@@ -48,7 +48,7 @@ You could do something similar if you had a set of database adapters.
     $dbFactory->setSuffix('Adapter');
     $dbFactory = new InflectionDecorator($dbFactory);
     $dbFactory = new RequiredOptionsDecorator($dbFactory);
-    $dbFactory->setRequiredKey(array('db_host', 'db_user', 'db_pass', 'db_name'));
+    $dbFactory->setRequiredKeys(array('db_host', 'db_user', 'db_pass', 'db_name'));
 
     $db = $dbFactory->create('mysql', array(
         'db_host' => 'localhost',
@@ -94,7 +94,7 @@ the `FactoryBuilder`.
         ->addNameTransformer(function ($name) { return "{$name}Adapter"; })
         ->addNameInflection()
         ->addRequiredOptions(array('db_host', 'db_user', 'db_pass', 'db_name'))
-        ->addFlyweightCaching()
+        ->addFlyweightCaching(function ($name, $options) { return md5($name . implode('|', $options)); })
         ->build();
 
 TODO
