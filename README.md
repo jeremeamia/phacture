@@ -12,7 +12,7 @@ pattern. Phacture has two parts:
 1. A common interface for factory objects.
 2. Implementations for a few boilerplate factory use cases.
 
-Phacture was created by Jeremy Lindblom. This is version **0.1.0-preview**.
+Phacture was created by Jeremy Lindblom. This is version **0.2.0-preview**.
 
 Examples
 --------
